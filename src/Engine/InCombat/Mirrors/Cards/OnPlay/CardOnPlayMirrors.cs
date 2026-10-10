@@ -103,7 +103,9 @@ internal static partial class CardOnPlayMirrors
         registry.Register<Neurosurge>(CardDrawCardMirrors.NeurosurgeOnPlay);
         registry.Register<BurningPact>(static (_, _) => { });
         registry.Register<CompileDriver>(CardDrawCardMirrors.CompileDriverOnPlay);
+#if !STS2_LEGACY_107
         registry.Register<Constellation>(CardDrawCardMirrors.ConstellationOnPlay);
+#endif // STS2_LEGACY_107
         registry.Register<EscapePlan>(CardDrawCardMirrors.EscapePlanOnPlay);
         registry.Register<Expertise>(CardDrawCardMirrors.ExpertiseOnPlay);
         registry.Register<Fetch>(CardDrawCardMirrors.FetchOnPlay);
@@ -163,7 +165,9 @@ internal static partial class CardOnPlayMirrors
         registry.Register<TrueGrit>(CardSelectionCardMirrors.TrueGritOnPlay);
         registry.Register<Uproar>(CardSelectionCardMirrors.UproarOnPlay);
 
+#if !STS2_LEGACY_107
         registry.Register<Abundance>(CardGenerationCardMirrors.AbundanceOnPlay);
+#endif // STS2_LEGACY_107
         registry.Register<BundleOfJoy>(CardGenerationCardMirrors.BundleOfJoyOnPlay);
         registry.Register<Distraction>(CardGenerationCardMirrors.DistractionOnPlay);
         registry.Register<Discovery>(CardGenerationCardMirrors.DiscoveryOnPlay);

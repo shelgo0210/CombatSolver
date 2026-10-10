@@ -44,7 +44,9 @@ internal static class AfterCardExhaustedMirrors
         registry.Register<FeelNoPainPower>(HandleFeelNoPainPower);
         registry.Register<ForgottenSoul>(HandleForgottenSoul);
         registry.Register<JossPaper>(HandleJossPaper);
+#if !STS2_LEGACY_107
         registry.Register<Midnight>(HandleMidnight);
+#endif // STS2_LEGACY_107
         registry.RegisterIgnored<SkillIronclad1Achievement>();
 
         return registry;
@@ -162,11 +164,13 @@ internal static class AfterCardExhaustedMirrors
         }
     }
 
+#if !STS2_LEGACY_107
     private static void HandleMidnight(Midnight card, AfterCardExhaustedMirrorContext context)
     {
         // StS2 v0.108.0 added Midnight's global exhaust listener; mutate only the predicted instance.
         context.State.FindCard(card)?.MutablePreview.EnergyCost.AddThisCombat(-1);
     }
+#endif // STS2_LEGACY_107
 }
 
 internal sealed class DarkEmbracePredictionState(DarkEmbracePower power) : IPredictionStateForkable

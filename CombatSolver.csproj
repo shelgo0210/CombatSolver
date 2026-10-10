@@ -25,6 +25,9 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>CombatSolver</RootNamespace>
     <Version>0.50.1</Version>
+    <!-- Experimental v0.107.1 source port only; not a release-ready build. -->
+    <DefineConstants Condition="'$(Legacy107Port)' == 'true'">$(DefineConstants);STS2_LEGACY_107</DefineConstants>
+    <RitsuLibReferenceTarget Condition="'$(Legacy107Port)' == 'true'">0.107.1</RitsuLibReferenceTarget>
     <DefineConstants Condition="'$(VerifyHistoryCounters)' == 'true'">$(DefineConstants);VERIFY_HISTORY_COUNTERS</DefineConstants>
     <SteamRoot Condition="'$(SteamRoot)' == '' and '$(OS)' == 'Windows_NT' and Exists('D:/Steam')">D:/Steam</SteamRoot>
     <SteamRoot Condition="'$(SteamRoot)' == '' and '$(OS)' == 'Windows_NT'">$(MSBuildProgramFiles32)/Steam</SteamRoot>

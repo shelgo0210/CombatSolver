@@ -38,18 +38,23 @@ internal static class AfterDamageGivenMirrors
         var registry = new Registry(AfterDamageGiven);
 
         registry.RegisterIgnored<SkillIronclad2Achievement>();
+#if !STS2_LEGACY_107
         registry.Register<ConcoctPower>(HandleConcoctPower);
+#endif // STS2_LEGACY_107
         registry.Register<EnvenomPower>(HandleEnvenomPower);
         registry.RegisterIgnored<ImbalancedPower>();
         registry.Register<MonarchsGazePower>(HandleMonarchsGazePower);
         registry.Register<PaperCutsPower>(HandlePaperCutsPower);
         registry.Register<ReaperFormPower>(HandleReaperFormPower);
         registry.Register<SicEmPower>(HandleSicEmPower);
+#if !STS2_LEGACY_107
         registry.Register<UnderworldPower>(HandleUnderworldPower);
+#endif // STS2_LEGACY_107
 
         return registry;
     }
 
+#if !STS2_LEGACY_107
     private static void HandleConcoctPower(ConcoctPower power, AfterDamageGivenMirrorContext context)
     {
         if (context.Dealer == power.Owner &&
@@ -59,6 +64,7 @@ internal static class AfterDamageGivenMirrors
             Effects(context).ApplyPowerFromSource(typeof(PoisonPower), context.Target, power.Amount, power.Owner, cardSource: null);
         }
     }
+#endif // STS2_LEGACY_107
 
     private static void HandleEnvenomPower(EnvenomPower power, AfterDamageGivenMirrorContext context)
     {
@@ -142,6 +148,7 @@ internal static class AfterDamageGivenMirrors
         }
     }
 
+#if !STS2_LEGACY_107
     private static void HandleUnderworldPower(UnderworldPower power, AfterDamageGivenMirrorContext context)
     {
         if (context.Dealer != null &&
@@ -161,6 +168,7 @@ internal static class AfterDamageGivenMirrors
                 cardSource: null);
         }
     }
+#endif // STS2_LEGACY_107
 
     private static ICombatPredictionEffectSink Effects(AfterDamageGivenMirrorContext context)
         => context.CombatState as ICombatPredictionEffectSink

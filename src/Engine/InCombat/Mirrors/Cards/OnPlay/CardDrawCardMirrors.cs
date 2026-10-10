@@ -68,6 +68,7 @@ internal static class CardDrawCardMirrors
         context.Simulator.DiscardAndDraw(cards, cards.Length);
     }
 
+#if !STS2_LEGACY_107
     public static void ConstellationOnPlay(Constellation card, CardOnPlayMirrorContext context)
     {
         var player = context.TargetPlayer;
@@ -79,6 +80,7 @@ internal static class CardDrawCardMirrors
             return;
         context.GainBlock(player.Creature);
     }
+#endif // STS2_LEGACY_107
 
     public static void EscapePlanOnPlay(EscapePlan card, CardOnPlayMirrorContext context)
     {

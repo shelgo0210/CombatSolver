@@ -11,6 +11,7 @@ namespace CombatSolver.Engine.InCombat.Mirrors.Cards.OnPlay;
 
 internal static class CardGenerationCardMirrors
 {
+#if !STS2_LEGACY_107
     public static void AbundanceOnPlay(Abundance card, CardOnPlayMirrorContext context)
     {
         var cards = context.Simulator.GetDistinctUnlockedCharacterCardsForCombat(
@@ -24,6 +25,7 @@ internal static class CardGenerationCardMirrors
 
         RecordOptions(context, cards);
     }
+#endif // STS2_LEGACY_107
 
     public static void BundleOfJoyOnPlay(BundleOfJoy card, CardOnPlayMirrorContext context)
     {

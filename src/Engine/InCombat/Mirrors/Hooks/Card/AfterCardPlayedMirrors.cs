@@ -104,7 +104,9 @@ internal static class AfterCardPlayedMirrors
         registry.Register<GalvanicPower>(HandleGalvanicPower);
         registry.Register<GravityPower>(HandleGravityPower);
         registry.Register<HauntPower>(HandleHauntPower);
+#if !STS2_LEGACY_107
         registry.Register<ImitationLearningPower>(HandleImitationLearningPower);
+#endif // STS2_LEGACY_107
         registry.Register<MasterPlannerPower>(HandleMasterPlannerPower);
         registry.Register<MonologuePower>(HandleMonologuePower);
         registry.Register<OblivionPower>(HandleOblivionPower);
@@ -637,6 +639,7 @@ internal static class AfterCardPlayedMirrors
         }
     }
 
+#if !STS2_LEGACY_107
     private static void HandleImitationLearningPower(
         ImitationLearningPower power,
         AfterCardPlayedMirrorContext context)
@@ -661,6 +664,7 @@ internal static class AfterCardPlayedMirrors
             clone,
             nestedChoiceSourceId: power.Id.Entry);
     }
+#endif // STS2_LEGACY_107
 
     private static void HandleMonologuePower(MonologuePower power, AfterCardPlayedMirrorContext context)
     {

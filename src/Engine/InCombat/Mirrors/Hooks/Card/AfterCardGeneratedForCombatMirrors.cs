@@ -35,7 +35,9 @@ internal static class AfterCardGeneratedForCombatMirrors
         registry.Register<Aeonglass>(HandleAeonglass);
         registry.Register<ArsenalPower>(HandleArsenalPower);
         registry.Register<Regalite>(HandleRegalite);
+#if !STS2_LEGACY_107
         registry.Register<SoulboundPower>(HandleSoulboundPower);
+#endif // STS2_LEGACY_107
         registry.Register<PillarOfCreationPower>(HandlePillarOfCreationPower);
         registry.Register<SmokestackPower>(HandleSmokestackPower);
         registry.Register<TrashToTreasurePower>(HandleTrashToTreasurePower);
@@ -84,6 +86,7 @@ internal static class AfterCardGeneratedForCombatMirrors
         context.Simulator.GainBlock(relic.Owner.Creature, relic.DynamicVars.Block);
     }
 
+#if !STS2_LEGACY_107
     private static void HandleSoulboundPower(SoulboundPower power, AfterCardGeneratedForCombatMirrorContext context)
     {
         if (context.Creator?.Creature != power.Applier ||
@@ -114,6 +117,7 @@ internal static class AfterCardGeneratedForCombatMirrors
             state.IsAddingSoul = false;
         }
     }
+#endif // STS2_LEGACY_107
 
     private static void HandlePillarOfCreationPower(PillarOfCreationPower power, AfterCardGeneratedForCombatMirrorContext context)
     {
@@ -166,12 +170,14 @@ internal sealed class AfterCardGeneratedForCombatMirrorContext : CombatCardMirro
     public required Player? Creator { get; init; }
 }
 
+#if !STS2_LEGACY_107
 internal sealed class SoulboundPredictionState(SoulboundPower power) : IPredictionStateForkable
 {
     public bool IsAddingSoul { get; set; } = power._isAddingSoul;
 
     public object Fork(PredictionForkContext context) => MemberwiseClone();
 }
+#endif // STS2_LEGACY_107
 
 internal sealed class RegalitePredictionState(Regalite relic) : IPredictionStateForkable
 {

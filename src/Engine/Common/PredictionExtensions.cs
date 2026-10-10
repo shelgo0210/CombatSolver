@@ -13,14 +13,19 @@ internal readonly record struct PredictionRngState(
     ulong State0,
     ulong State1,
     ulong State2,
-    ulong State3);
+    ulong State3,
+    uint Seed = 0);
 
 internal static class PredictionExtensions
 {
     public static Rng Clone(this Rng rng)
     {
+#if STS2_LEGACY_107
+        Rng clone = new(rng.Seed, rng.Counter);
+#else
         Rng clone = new(0UL);
         clone._counter = rng._counter;
+#endif
         clone._random._s0 = rng._random._s0;
         clone._random._s1 = rng._random._s1;
         clone._random._s2 = rng._random._s2;
@@ -30,8 +35,13 @@ internal static class PredictionExtensions
 
     public static Rng ToRng(this PredictionRngState state)
     {
+#if STS2_LEGACY_107
+        Rng rng = new(state.Seed, 0);
+        rng.Counter = state.Counter;
+#else
         Rng rng = new(0UL);
         rng._counter = state.Counter;
+#endif
         rng._random._s0 = state.State0;
         rng._random._s1 = state.State1;
         rng._random._s2 = state.State2;
@@ -39,26 +49,45 @@ internal static class PredictionExtensions
         return rng;
     }
 
-    public static int Counter(this Rng rng) => rng._counter;
+    public static int Counter(this Rng rng)
+#if STS2_LEGACY_107
+        => rng.Counter;
+#else
+        => rng._counter;
+#endif
 
     public static PredictionRngState CaptureState(this Rng rng)
         => new(
+#if STS2_LEGACY_107
+            rng.Counter,
+#else
             rng._counter,
+#endif
             rng._random._s0,
             rng._random._s1,
             rng._random._s2,
+#if STS2_LEGACY_107
+            rng._random._s3,
+            rng.Seed);
+#else
             rng._random._s3);
+#endif
 
     public static void Advance(this Rng rng, int count)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(count);
 
+#if STS2_LEGACY_107
+        // Old engine's counter-forwarder consumes precisely one underlying raw draw per step.
+        rng.FastForwardCounter(checked(rng.Counter + count));
+#else
         // StS2 v0.108.0 FastForwardCounter advanced MegaRandom once per discarded value.
         // v0.109.0 removed counter-based reconstruction, so discard raw draws directly.
         for (var i = 0; i < count; i++)
         {
             _ = rng.NextUnsignedLong();
         }
+#endif
     }
 
     public static RelicGrabBag Clone(this RelicGrabBag grabBag)

@@ -56,7 +56,9 @@ internal static class BeforeCardPlayedMirrors
         registry.Register<FreePowerPower>(HandleFreePowerPower);
         registry.Register<FreeSkillPower>(HandleFreeSkillPower);
         registry.Register<GravityPower>(HandleGravityPower);
+#if !STS2_LEGACY_107
         registry.Register<ImitationLearningPower>(HandleImitationLearningPower);
+#endif // STS2_LEGACY_107
         registry.Register<JugglingPower>(HandleJugglingPower);
         registry.Register<MonologuePower>(HandleMonologuePower);
         registry.Register<OblivionPower>(HandleOblivionPower);
@@ -171,6 +173,7 @@ internal static class BeforeCardPlayedMirrors
         }
     }
 
+#if !STS2_LEGACY_107
     private static void HandleImitationLearningPower(
         ImitationLearningPower power,
         BeforeCardPlayedMirrorContext context)
@@ -189,6 +192,7 @@ internal static class BeforeCardPlayedMirrors
             state.CardAndClones.Add((context.Card, context.Card.CreateCloneForPlayer(owner)));
         }
     }
+#endif // STS2_LEGACY_107
 
     private static void HandleMonologuePower(MonologuePower power, BeforeCardPlayedMirrorContext context)
     {
@@ -417,6 +421,7 @@ internal sealed class MusicBoxPredictionState(MusicBox relic) : IPredictionState
     }
 }
 
+#if !STS2_LEGACY_107
 internal sealed class ImitationLearningPredictionState(ImitationLearningPower power)
     : IPredictionStateForkable, IPredictionForkBoundary
 {
@@ -438,3 +443,4 @@ internal sealed class ImitationLearningPredictionState(ImitationLearningPower po
             throw new InvalidOperationException("Cannot fork Imitation Learning during card-play resolution.");
     }
 }
+#endif // STS2_LEGACY_107

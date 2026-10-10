@@ -73,7 +73,9 @@ internal static class AfterCardDrawnMirrors
         registry.Register<ChainsOfBindingPower>(HandleChainsOfBindingPower);
         registry.Register<CorrosiveWavePower>(HandleCorrosiveWavePower);
         registry.Register<SpeedsterPower>(HandleSpeedsterPower);
+#if !STS2_LEGACY_107
         registry.Register<CacophonyPower>(HandleCacophonyPower);
+#endif // STS2_LEGACY_107
         registry.Register<KinglyKick>(HandleKinglyKick);
         registry.Register<KinglyPunch>(HandleKinglyPunch);
         registry.Register<AutomationPower>(HandleAutomationPower);
@@ -190,6 +192,7 @@ internal static class AfterCardDrawnMirrors
         }
     }
 
+#if !STS2_LEGACY_107
     private static void HandleCacophonyPower(CacophonyPower power, AfterCardDrawnMirrorContext context)
     {
         var state = context.StateStore.Get(power, () => new CacophonyPredictionState(power));
@@ -210,6 +213,7 @@ internal static class AfterCardDrawnMirrors
             }
         }
     }
+#endif // STS2_LEGACY_107
 
     private static void HandleKinglyKick(KinglyKick card, AfterCardDrawnMirrorContext context)
     {
@@ -303,12 +307,14 @@ internal sealed class HellraiserPredictionState(HellraiserPower power) : IPredic
     public object Fork(PredictionForkContext context) => MemberwiseClone();
 }
 
+#if !STS2_LEGACY_107
 internal sealed class CacophonyPredictionState(CacophonyPower power) : IPredictionStateForkable
 {
     public int CardsDrawn { get; set; } = power.DynamicVars.Cards.IntValue;
 
     public object Fork(PredictionForkContext context) => MemberwiseClone();
 }
+#endif // STS2_LEGACY_107
 
 internal sealed class AutomationPredictionState(AutomationPower power) : IPredictionStateForkable
 {

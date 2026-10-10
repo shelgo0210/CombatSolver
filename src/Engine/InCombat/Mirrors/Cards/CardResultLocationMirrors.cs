@@ -42,7 +42,9 @@ internal static class CardResultLocationMirrors
 
         registry.Register<ParticleWall>(HandleParticleWall);
         registry.Register<ShiningStrike>(HandleShiningStrike);
+#if !STS2_LEGACY_107
         registry.Register<TheBall>(HandleTheBall);
+#endif // STS2_LEGACY_107
 
         return registry;
     }
@@ -93,6 +95,7 @@ internal static class CardResultLocationMirrors
         return result;
     }
 
+#if !STS2_LEGACY_107
     private static CardLocation HandleTheBall(TheBall _, CardResultLocationMirrorContext context)
     {
         var result = context.BaseResult;
@@ -116,6 +119,7 @@ internal static class CardResultLocationMirrors
         }
         return result;
     }
+#endif // STS2_LEGACY_107
 }
 
 internal sealed class CardResultLocationMirrorContext : CombatCardMirrorContext<CardModel>
