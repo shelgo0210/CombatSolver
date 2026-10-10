@@ -331,9 +331,11 @@ internal static partial class TurnStartPowerSupport
                     }
                     simulator.GainBlock(owner, mantle.Amount, ValueProp.Unpowered);
                     break;
+#if !STS2_LEGACY_107
                 case HibernatePower:
                     combat.SetPowerAmount(power, power.Amount - 1);
                     break;
+#endif // v0.107.1 absent content
                 case InfernoPower inferno:
                     int infernoDamage = inferno.DynamicVars["SelfDamage"].IntValue;
                     if (infernoDamage > 0)

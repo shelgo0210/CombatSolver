@@ -80,7 +80,7 @@ internal sealed partial class CombatPredictionSimulator
                 _blockGainedByCardPlay[cardPlay] = (previous.Amount + modifiedBlock,
                     previous.PoweredEvents + (powered ? 1 : 0));
                 if (powered && State.CombatState is ICombatPredictionCardEventSink sink)
-                    sink.RecordPoweredCardBlockGained(cardPlay.Player.Creature);
+                    sink.RecordPoweredCardBlockGained(cardPlay.Card.Owner.Creature);
             }
             State.GetCreature(creature).GainBlock(modifiedBlock);
         }

@@ -9,14 +9,14 @@ namespace CombatSolver;
 internal sealed partial class SimulatedCombatState
 {
     private sealed record BeforeHandDrawRelicFrame(Player Player, IReadOnlyList<RelicModel> Relics,
-        int Turn, int NextIndex) : ICombatPredictionExecutionFrame
+        int Turn, int NextIndex, bool ApplyMittensStrength = false) : ICombatPredictionExecutionFrame
     {
         public ICombatPredictionExecutionFrame Fork(PredictionForkContext context)
             => this with { Relics = Relics.Select(context.RemapOrSelf).ToArray() };
         public bool Resume(CombatPredictionSimulator simulator)
         {
             var combat = (SimulatedCombatState)simulator.State.CombatState;
-            return !combat.ContinueRelicsBeforeHandDraw(simulator, Player, combat.ActiveExecutionChoices, Relics, Turn, NextIndex);
+            return !combat.ContinueRelicsBeforeHandDraw(simulator, Player, combat.ActiveExecutionChoices, Relics, Turn, NextIndex, ApplyMittensStrength);
         }
     }
 

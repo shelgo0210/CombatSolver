@@ -28,15 +28,19 @@ internal static class PowerPredictionStateSupport
             case (PanachePower value, PanachePower original):
                 _ = simulator.StateStore.GetReadOnly(value, () => new PanachePredictionState(original));
                 break;
+#if !STS2_LEGACY_107
             case (SoulboundPower value, SoulboundPower original):
                 _ = simulator.StateStore.GetReadOnly(value, () => new SoulboundPredictionState(original));
                 break;
+#endif // v0.107.1 absent content
             case (HellraiserPower value, HellraiserPower original):
                 _ = simulator.StateStore.GetReadOnly(value, () => new HellraiserPredictionState(original));
                 break;
+#if !STS2_LEGACY_107
             case (CacophonyPower value, CacophonyPower original):
                 _ = simulator.StateStore.GetReadOnly(value, () => new CacophonyPredictionState(original));
                 break;
+#endif // v0.107.1 absent content
             case (AutomationPower value, AutomationPower original):
                 _ = simulator.StateStore.GetReadOnly(value, () => new AutomationPredictionState(original));
                 break;

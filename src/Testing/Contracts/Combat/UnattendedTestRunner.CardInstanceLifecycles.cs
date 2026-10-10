@@ -417,7 +417,11 @@ internal sealed partial class UnattendedTestRunner
         foreach (var (id, upgrade) in new[] { ("IRON_WAVE", 0), ("IRON_WAVE", 1), ("ARMAMENTS", 1), ("TAUNT", 0) })
         {
             await ClearOrderedEffectFixtureAsync(combat, player);
+            #if STS2_LEGACY_107
+            await CreatureCmd.LoseBlock(player.Creature, player.Creature.Block);
+            #else
             await CreatureCmd.LoseBlock(new BlockingPlayerChoiceContext(), player.Creature, player.Creature.Block, null);
+            #endif
             await CreatureCmd.GainBlock(player.Creature, 14, MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, null);
             await InjectPowerAsync(combat, player, new() { PowerId = "THORNS_POWER", Target = "Enemy", Amount = 5 });
             await InjectCardAsync(combat, player, new() { CardId = id, UpgradeLevels = upgrade, Pile = "Hand" });

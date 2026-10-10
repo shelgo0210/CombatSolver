@@ -185,7 +185,9 @@ internal sealed class RootCombatCardGenerationPoolSnapshot
             && !player.Character.IsMutable
             && player.Character.GetType().Assembly == NativeModelAssembly
             && !cardPool.IsMutable
+#if !STS2_LEGACY_107
             && !cardPool.IsMock
+#endif
             && cardPool.GetType().Assembly == NativeModelAssembly
             && ReferenceEquals(cardPool, ModelDb.GetById<CardPoolModel>(cardPool.Id))
             && ReferenceEquals(cardPool.AllCards, entry.AllCardsIdentity))
@@ -262,7 +264,9 @@ internal sealed class RootCombatCardGenerationPoolSnapshot
     {
         if (cardPool.GetType().Assembly == NativeModelAssembly
             && !cardPool.IsMutable
+#if !STS2_LEGACY_107
             && !cardPool.IsMock
+#endif
             && !cardPool.IsColorless
             && ReferenceEquals(cardPool, ModelDb.GetById<CardPoolModel>(cardPool.Id))
             && cardPool.AllCards is CardModel[] allCards

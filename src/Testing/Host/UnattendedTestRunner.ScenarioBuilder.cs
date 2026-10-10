@@ -67,7 +67,11 @@ internal sealed partial class UnattendedTestRunner
             }
             UnattendedTestRequest request = runner._request;
             runner.SetStage("game_startup");
+            #if STS2_LEGACY_107
+            await LegacyTestHooks.WaitForStartupAsync(runner._host);
+            #else
             await runner._host.GameStartupComplete;
+            #endif
             runner.RecordCheckpointModDifferencesAfterStartup();
             runner.ApplyHeadlessFastModeOverride();
             runner.EnsureWithinDeadline();
@@ -80,7 +84,7 @@ internal sealed partial class UnattendedTestRunner
             CharacterModel character = ResolveUnique(ModelDb.AllCharacters, request.CharacterId, "角色");
             // AllEncounters is a curated pool and omits some event encounters.
             // The registry is authoritative for a caller-selected native model.
-            EncounterModel encounter = ResolveUnique(ModelDb.All.OfType<EncounterModel>(), request.EncounterId, "遭遇");
+            EncounterModel encounter = ResolveUnique(ModelDb._contentById.Values.OfType<EncounterModel>(), request.EncounterId, "遭遇");
             AssertExpectedLoadedMods(request.ExpectedLoadedMods);
             if (!string.IsNullOrWhiteSpace(request.ShowcaseBundlePath))
             {
@@ -823,8 +827,16 @@ internal sealed partial class UnattendedTestRunner
             ];
             ulong state = sampleSeed;
             foreach (RunRngType stream in combatStreams)
+                #if STS2_LEGACY_107
+                runState.Rng.MockRng(stream, unchecked((uint)NextSimulationSeed(ref state)));
+#else
                 runState.Rng.MockRng(stream, NextSimulationSeed(ref state));
-            encounter._rng = new Rng(NextSimulationSeed(ref state));
+#endif
+            #if STS2_LEGACY_107
+                encounter._rng = new Rng(unchecked((uint)NextSimulationSeed(ref state)));
+#else
+                encounter._rng = new Rng(NextSimulationSeed(ref state));
+#endif
             runner._completedChecks.Add($"PreCombatSimulationRng:{sampleSeed}");
         }
 

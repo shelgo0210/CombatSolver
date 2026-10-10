@@ -478,7 +478,11 @@ internal sealed partial class CombatPredictionSimulator
                 $"Cannot transfer {card.Preview.Id} because it is not in {originalOwner}'s combat piles.");
 
         oldPile.Remove(card);
+#if STS2_LEGACY_107
+        throw new NotSupportedException("v0.107.1 has no native in-combat cross-player card transfer; predicted transfer must abort.");
+#else
         card.MutablePreview.GiveToAnotherPlayer(newOwner);
+#endif
         card.NotifyHookListenerStructureChanged();
         AddToPile(card, pileType, position, isChangingOwners: true);
     }

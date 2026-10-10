@@ -143,7 +143,7 @@ internal sealed partial class UnattendedTestRunner
     private void AssertContentModFailures(CombatState combat, Player player)
     {
         var simulator = CombatRootSnapshot.Capture(combat).ForkSimulator();
-        var model = ModelDb.All.OfType<UnadaptedContentModel>().Single();
+        var model = ModelDb._contentById.Values.OfType<UnadaptedContentModel>().Single();
         var previousMocks = AssemblyInfo.MockTypes;
         string previousLanguage = LocManager.Instance.Language;
         AssemblyInfo.MockTypes = previousMocks == null ? [] : new(previousMocks);

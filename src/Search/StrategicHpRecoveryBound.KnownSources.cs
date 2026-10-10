@@ -92,7 +92,7 @@ internal static partial class StrategicHpRecoveryBound
                 case RegenPotion:
                     regen += Math.Max(0, potion.DynamicVars["RegenPower"].IntValue);
                     break;
-                case BloodPotion or Ambergris:
+                case BloodPotion:
                     directHeal += (long)Math.Ceiling(simulator.State.GetCreature(player.Creature).MaxHp
                         * potion.DynamicVars["HealPercent"].BaseValue / 100m);
                     break;

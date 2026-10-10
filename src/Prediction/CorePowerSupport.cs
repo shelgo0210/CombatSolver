@@ -380,9 +380,11 @@ internal static class CorePowerSupport
                 PersistentPowerSupport.Forge(simulator, card.Owner, card.DynamicVars.Forge.IntValue);
                 combat.AddEnergyNextTurn(card.Owner, card.DynamicVars.Energy.IntValue);
                 break;
+#if !STS2_LEGACY_107
             case Sidestep:
                 combat.AddEnergyNextTurn(card.Owner, card.DynamicVars.Energy.IntValue);
                 break;
+#endif // v0.107.1 absent content
         }
         if (simulator.HasPendingChoice)
             return false;

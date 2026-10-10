@@ -108,7 +108,7 @@ internal sealed partial class CombatPredictionSimulator
         PredictedCard card = context.RequireRemap(source.Card);
         CardPlay play = new()
         {
-            Card = card.MutablePreview, Player = source.Play.Player, Target = source.Play.Target,
+            Card = card.MutablePreview, Target = source.Play.Target,
             ResultPile = source.Play.ResultPile, Resources = source.Play.Resources,
             IsAutoPlay = source.Play.IsAutoPlay, PlayIndex = source.Play.PlayIndex, PlayCount = source.Play.PlayCount,
         };
@@ -130,14 +130,14 @@ internal sealed partial class CombatPredictionSimulator
         using (_trace.ResumeManualCardChoice(frame.Trace))
         {
             bool completed;
-            using (BeginCardOrPotionEffect(frame.Play.Player))
+            using (BeginCardOrPotionEffect(frame.Play.Card.Owner))
             {
                 if (!frame.Choice.Resolve(this, frame.Card))
                     return false;
                 completed = CompleteManualCardPlayTail(frame.Card, frame.Target, frame.Play, frame.OwnerBlockBefore);
             }
             if (completed)
-                CompleteManualCardResultTail(frame.Card, frame.Play.Player, frame.Result);
+                CompleteManualCardResultTail(frame.Card, frame.Play.Card.Owner, frame.Result);
         }
         if (History.HasCardPlayStartedSince(frame.HistoryStart, frame.Trace) && !HasPendingChoice)
             ((ICombatPredictionCardExecutionSink)State.CombatState).CompleteCardExecution(this);

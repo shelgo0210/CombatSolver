@@ -148,7 +148,9 @@ internal sealed class RootCombatTransformationPoolSnapshot
     {
         if (pool.GetType().Assembly == NativeModelAssembly
             && !pool.IsMutable
+#if !STS2_LEGACY_107
             && !pool.IsMock
+#endif
             && ReferenceEquals(pool, ModelDb.GetById<CardPoolModel>(pool.Id))
             && pool.AllCards is CardModel[] cards
             && AllCardsAreNativeCanonical(cards))

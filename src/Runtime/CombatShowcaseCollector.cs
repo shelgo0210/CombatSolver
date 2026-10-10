@@ -277,7 +277,7 @@ internal static class CombatShowcaseCollector
     }
 
     private static bool HasPlayerCardPlay(Player player)
-        => CombatManager.Instance.History.CardPlaysStarted.Any(entry => entry.CardPlay.Player == player);
+        => CombatManager.Instance.History.CardPlaysStarted.Any(entry => entry.CardPlay.Card.Owner == player);
 
     private static object[] CaptureCards(Player player)
     {

@@ -76,6 +76,7 @@ internal static class AfterCardGeneratedForCombatMirrors
             return;
         }
 
+#if !STS2_LEGACY_107
         var state = context.StateStore.Get(relic, () => new RegalitePredictionState(relic));
         if (state.UsedThisTurn)
         {
@@ -83,6 +84,7 @@ internal static class AfterCardGeneratedForCombatMirrors
         }
 
         state.UsedThisTurn = true;
+#endif // Legacy Regalite triggers each generated card (confirmed against v0.107.1 IL).
         context.Simulator.GainBlock(relic.Owner.Creature, relic.DynamicVars.Block);
     }
 
@@ -181,7 +183,12 @@ internal sealed class SoulboundPredictionState(SoulboundPower power) : IPredicti
 
 internal sealed class RegalitePredictionState(Regalite relic) : IPredictionStateForkable
 {
+#if STS2_LEGACY_107
+    // This state is constant in 0.107.1; Regalite has no once-per-turn flag.
+    public bool UsedThisTurn { get; set; }
+#else
     public bool UsedThisTurn { get; set; } = relic._usedThisTurn;
+#endif
 
     public object Fork(PredictionForkContext context) => MemberwiseClone();
 }

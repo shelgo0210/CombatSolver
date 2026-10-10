@@ -223,7 +223,7 @@ internal sealed partial class UnattendedTestRunner
             throw new InvalidOperationException($"测试房间应能镜像掉落结论，实际 {outlook}。");
         if (player.RunState.CurrentRoom is not CombatRoom room)
             throw new InvalidOperationException("当前房间不是战斗房间，无法生成原版奖励。");
-        int counterBefore = player.PlayerRng.Rewards._counter;
+        int counterBefore = player.PlayerRng.Rewards.Counter;
         RewardsSet rewards = new RewardsSet(player).WithRewardsFromRoom(room);
         await rewards.GenerateWithoutOffering();
         PotionReward? potionReward = rewards.Rewards.OfType<PotionReward>().FirstOrDefault();
@@ -234,11 +234,11 @@ internal sealed partial class UnattendedTestRunner
             throw new InvalidOperationException(
                 $"药水掉落预测 {outlook.Forecast}/{outlook.ForecastPotionId ?? "-"} 与原版奖励 " +
                 $"{(actualDrop ? "Drop" : "NoDrop")}/{actualPotion ?? "-"} 不符（room={room.RoomType} " +
-                $"odds={player.PlayerOdds.PotionReward.CurrentValue:0.###} counter={counterBefore}→{player.PlayerRng.Rewards._counter}）。");
+                $"odds={player.PlayerOdds.PotionReward.CurrentValue:0.###} counter={counterBefore}→{player.PlayerRng.Rewards.Counter}）。");
         Entry.Logger.Info(
             $"[CombatSolver/Test] POTION_REWARD_FORECAST_CHECK room={room.RoomType} forecast={outlook.Forecast} " +
             $"potion={outlook.ForecastPotionId ?? "-"} chance={outlook.DropChance:0.###} " +
-            $"counter={counterBefore}->{player.PlayerRng.Rewards._counter} belt_full={outlook.BeltFull} credit={outlook.ReplacementHpCredit}");
+            $"counter={counterBefore}->{player.PlayerRng.Rewards.Counter} belt_full={outlook.BeltFull} credit={outlook.ReplacementHpCredit}");
         _completedChecks.Add($"PotionRewardForecast:{room.RoomType}:{outlook.Forecast}:{outlook.ForecastPotionId ?? "none"}");
     }
 }

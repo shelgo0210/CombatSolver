@@ -1371,6 +1371,10 @@ internal static partial class SolverController
         }
         catch (Exception ex)
         {
+            LastSearchFailureForTesting = ex;
+#if STS2_LEGACY_107
+            GD.PrintErr($"[CombatSolver/Legacy107] SEARCH_SETUP_FAILURE stage={setupStage} reason={reason} exception={ex}");
+#endif
             _combat.BugReportIssues.RecordFailure(CombatBugReportIssueKind.SearchSetupFailure, ex);
             CancelSearch();
             _combat.State = null;

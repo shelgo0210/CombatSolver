@@ -344,7 +344,9 @@ internal sealed partial class UnattendedTestRunner
                      .Where(power => power is ColossusPower
                          or AsleepPower
                          or BattlewornDummyTimeLimitPower
+#if !STS2_LEGACY_107
                          or ConcoctPower
+#endif
                          or CorrosiveWavePower
                          or DemisePower
                          or DarkEmbracePower
@@ -369,7 +371,9 @@ internal sealed partial class UnattendedTestRunner
                          or StranglePower
                          or JugglingPower
                          or TenderPower
+#if !STS2_LEGACY_107
                          or UnderworldPower
+#endif
                          or ConstrictPower
                          or TemporaryStrengthPower
                          or HotfixPower

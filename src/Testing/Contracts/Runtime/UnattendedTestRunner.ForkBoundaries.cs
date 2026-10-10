@@ -76,7 +76,9 @@ internal sealed partial class UnattendedTestRunner
         AssertAfterSideTurnEndRelicChoiceSuspends(combat, player);
         AssertEndTurnPowerChoiceSuspends(combat, player);
         AssertAfterAutoPostPlayNestedChoiceSuspendsAcrossFork(combat, player);
+#if !STS2_LEGACY_107
         AssertAfterCardPlayedNestedChoiceSuspendsWrapperCompletion(combat, player);
+#endif
         AssertNestedChoiceSuspendsOuterPostChoiceEffects(combat, player);
         AssertMonsterAiUsesCapturedMachine(combat);
         AssertCardCompletionSettlesPowerAmountChanges(combat, player);
@@ -115,7 +117,7 @@ internal sealed partial class UnattendedTestRunner
         AssertForkRejected(simulator, "action relic triggers");
         simulator.ActionRelicTriggers = null;
 
-        PenNib relic = ModelDb.All.OfType<PenNib>().Single();
+        PenNib relic = ModelDb._contentById.Values.OfType<PenNib>().Single();
         PenNibPredictionState penNib = simulator.StateStore.Get(
             (AbstractModel)relic,
             () => new PenNibPredictionState(relic));
@@ -123,14 +125,16 @@ internal sealed partial class UnattendedTestRunner
         AssertForkRejected(simulator, "Pen Nib");
         penNib.AttackToDouble = null;
 
-        PaelsLegion paelsLegion = ModelDb.All.OfType<PaelsLegion>().Single();
+        PaelsLegion paelsLegion = ModelDb._contentById.Values.OfType<PaelsLegion>().Single();
         PaelsLegionPredictionState paelsState = simulator.StateStore.Get(
             (AbstractModel)paelsLegion,
             () => new PaelsLegionPredictionState(paelsLegion));
         CardPlay paelsPlay = new()
         {
             Card = card,
+#if !STS2_LEGACY_107
             Player = player,
+#endif
             Target = null,
             ResultPile = PileType.Discard,
             Resources = default,
@@ -152,7 +156,7 @@ internal sealed partial class UnattendedTestRunner
         if (paelsState.AffectedCardPlay != null)
             throw new InvalidOperationException("佩尔军团没有在中止 CardPlay 边界清理瞬时状态。");
 
-        Vambrace vambraceRelic = ModelDb.All.OfType<Vambrace>().Single();
+        Vambrace vambraceRelic = ModelDb._contentById.Values.OfType<Vambrace>().Single();
         VambracePredictionState vambrace = simulator.StateStore.Get(
             (AbstractModel)vambraceRelic,
             () => new VambracePredictionState(vambraceRelic));
@@ -1470,6 +1474,7 @@ internal sealed partial class UnattendedTestRunner
         }
     }
 
+#if !STS2_LEGACY_107
     private static void AssertAfterCardPlayedNestedChoiceSuspendsWrapperCompletion(
         CombatState combat,
         Player player)
@@ -1606,6 +1611,8 @@ internal sealed partial class UnattendedTestRunner
             simulatedCombat.EndActionChoices();
         }
     }
+#endif // game-v0.108+ fixture
+
 
     private static void AssertCardCompletionSettlesPowerAmountChanges(
         CombatState combat,

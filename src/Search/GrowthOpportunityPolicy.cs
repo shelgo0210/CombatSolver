@@ -275,7 +275,7 @@ internal static class GrowthOpportunityPolicy
         out string? reason)
     {
         if (cards.Any(card => card is Burst or EchoForm or OneTwoPunch or SignalBoost or TagTeam
-                or Nightmare or DualWield or HeirloomHammer or Juggling or ImitationLearning
+                or Nightmare or DualWield or HeirloomHammer or Juggling
                 or HowlFromBeyond))
         {
             reason = "built_in:reachable_replay_or_copy_card";
@@ -283,7 +283,7 @@ internal static class GrowthOpportunityPolicy
         }
         if (state.Players.SelectMany(player => player.Creature.Powers).Any(power => power.Amount > 0m
                 && power is BurstPower or DuplicationPower or EchoFormPower or OneTwoPunchPower
-                    or SignalBoostPower or TagTeamPower or JugglingPower or ImitationLearningPower
+                    or SignalBoostPower or TagTeamPower or JugglingPower
                     or NightmarePower))
         {
             reason = "built_in:active_replay_or_copy_power";

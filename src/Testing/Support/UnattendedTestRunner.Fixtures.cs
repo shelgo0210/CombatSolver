@@ -144,6 +144,16 @@ internal sealed partial class UnattendedTestRunner
     {
         using JsonDocument document = JsonDocument.Parse(File.ReadAllText(snapshotPath));
         SerializableRunRngSet rng = ParseRunRng(document.RootElement.GetProperty("rng"));
+#if STS2_LEGACY_107
+        // Old RNG snapshots retain seed plus counters, not the newer full stream-state tuples.
+        // Merge only the selected streams into the current native snapshot.
+        SerializableRunRngSet merged = runState.Rng.ToSerializable();
+        if (merged.Seed != rng.Seed)
+            throw new InvalidOperationException("v0.107.1 selective RNG restore requires an identical native run seed.");
+        foreach (RunRngType type in new[] { RunRngType.UpFront, RunRngType.UnknownMapPoint, RunRngType.TreasureRoomRelics })
+            merged.Counters[type] = rng.Counters[type];
+        runState.Rng.LoadFromSerializable(merged);
+#else
         foreach (RunRngType type in new[]
                  {
                      RunRngType.UpFront,
@@ -153,6 +163,7 @@ internal sealed partial class UnattendedTestRunner
         {
             runState.Rng.GetRng(type).LoadFromSerializable(rng.Rngs[type]);
         }
+#endif
     }
 
     private static void LoadRunRng(RunState runState, JsonElement root)
@@ -187,6 +198,10 @@ internal sealed partial class UnattendedTestRunner
                 _ => throw new InvalidOperationException($"跑局快照包含未知 RNG {property.Name}。"),
             };
             JsonElement value = property.Value;
+#if STS2_LEGACY_107
+            // The original engine serializes each named stream by counter.
+            result.Counters[type] = value.GetProperty("counter").GetInt32();
+#else
             result.Rngs[type] = new SerializableRng
             {
                 counter = value.GetProperty("counter").GetInt32(),
@@ -195,6 +210,7 @@ internal sealed partial class UnattendedTestRunner
                 state2 = value.GetProperty("s2").GetUInt64(),
                 state3 = value.GetProperty("s3").GetUInt64(),
             };
+#endif
         }
         return result;
     }
@@ -203,7 +219,11 @@ internal sealed partial class UnattendedTestRunner
     {
         SerializablePlayerRngSet result = new()
         {
+            #if STS2_LEGACY_107
+            Seed = element.GetProperty("seed").GetUInt32(),
+#else
             Seed = element.GetProperty("seed").GetUInt64(),
+#endif
         };
         foreach (JsonProperty property in element.GetProperty("rngs").EnumerateObject())
         {
@@ -215,6 +235,10 @@ internal sealed partial class UnattendedTestRunner
                 _ => throw new InvalidOperationException($"跑局快照包含未知玩家 RNG {property.Name}。"),
             };
             JsonElement value = property.Value;
+#if STS2_LEGACY_107
+            // The original engine serializes each named stream by counter.
+            result.Counters[type] = value.GetProperty("counter").GetInt32();
+#else
             result.Rngs[type] = new SerializableRng
             {
                 counter = value.GetProperty("counter").GetInt32(),
@@ -223,6 +247,7 @@ internal sealed partial class UnattendedTestRunner
                 state2 = value.GetProperty("s2").GetUInt64(),
                 state3 = value.GetProperty("s3").GetUInt64(),
             };
+#endif
         }
         return result;
     }

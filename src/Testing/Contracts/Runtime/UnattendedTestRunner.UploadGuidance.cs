@@ -36,7 +36,7 @@ internal sealed partial class UnattendedTestRunner
             combatField.SetValue(null, native);
             // A registered content type outside this combat does not change guidance.
             AssemblyInfo.MockTypes[typeof(UnadaptedContentModel)] = (mod, false);
-            var absentMonster = ModelDb.All.OfType<MonsterModel>()
+            var absentMonster = ModelDb._contentById.Values.OfType<MonsterModel>()
                 .First(monster => monster.GetType() != combat.Enemies[0].Monster!.GetType());
             AssemblyInfo.MockTypes[absentMonster.GetType()] = (mod, false);
             native.UploadPolicy.Observe(combat);

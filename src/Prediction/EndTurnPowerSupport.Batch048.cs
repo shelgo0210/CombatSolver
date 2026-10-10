@@ -63,9 +63,11 @@ internal static partial class EndTurnPowerSupport
                 case StranglePower when ownerParticipates:
                     combat.SetPowerAmount(power, 0);
                     break;
+#if !STS2_LEGACY_107
                 case UnderworldPower when side == CombatSide.Enemy:
                     combat.SetPowerAmount(power, 0);
                     break;
+#endif // v0.107.1 absent content
             }
             if (simulator.HasPendingChoice)
                 return false;

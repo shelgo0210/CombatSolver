@@ -27,11 +27,15 @@ internal sealed partial class UnattendedTestRunner
             throw new InvalidOperationException($"测试格挡不能为负数：{targetBlock}。");
         if (creature.Block > targetBlock)
         {
+            #if STS2_LEGACY_107
+            await CreatureCmd.LoseBlock(creature, creature.Block - targetBlock);
+            #else
             await CreatureCmd.LoseBlock(
                 new BlockingPlayerChoiceContext(),
                 creature,
                 creature.Block - targetBlock,
                 null);
+            #endif
         }
         else if (creature.Block < targetBlock)
         {

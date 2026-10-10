@@ -323,7 +323,7 @@ internal static partial class CardChoiceSupport
         if (selected.Count == 0)
             return true;
         PredictedCard generated = selected[0].Clone();
-        if (source is Abundance or Discovery or Splash)
+        if (source is Discovery or Splash)
             generated.SetToFreeThisTurn();
         simulator.AddGeneratedCardToCombat(
             generated,

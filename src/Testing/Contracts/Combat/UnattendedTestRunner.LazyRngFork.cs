@@ -24,7 +24,7 @@ internal sealed partial class UnattendedTestRunner
         ];
         CombatPredictionRngSet root = CombatPredictionRngSet.From(live);
         PredictionRngState[] initial = streams.Select(s => s.Read(root)).ToArray();
-        Rng[] expected = streams.Select(s => new Rng(s.Mutable(root).ToSerializable())).ToArray();
+        Rng[] expected = streams.Select(s => s.Mutable(root).Clone()).ToArray();
         CombatPredictionRngSet parent = root.Fork();
         CombatPredictionRngSet untouched = parent.Fork();
         CombatPredictionRngSet sibling = parent.Fork();
@@ -46,7 +46,7 @@ internal sealed partial class UnattendedTestRunner
                 throw new InvalidOperationException("Lazy RNG lost a counter or a generator state word.");
 
             CombatPredictionRngSet grandchild = child.Fork().Fork();
-            Rng childExpected = new(stream.Mutable(root).ToSerializable());
+            Rng childExpected = stream.Mutable(root).Clone();
             Rng grandchildRng = stream.Mutable(grandchild);
             if (ReferenceEquals(grandchildRng, retained)
                 || ReferenceEquals(grandchildRng, stream.Mutable(child)))

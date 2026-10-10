@@ -69,7 +69,13 @@ internal sealed class UnattendedCombatStartReplayPatch : IPatchMethod
     public static string PatchId => "combat_solver_unattended_legacy_combat_start_replay";
     public static string Description => "在原生开战效果前恢复旧包开战检查点";
     public static ModPatchTarget[] GetTargets() =>
+#if STS2_LEGACY_107
+        [new(typeof(CombatManager), "AfterCreatureAdded", [typeof(Creature)])];
+    public static void Postfix(CombatManager __instance, Creature __0, ref Task __result)
+        => UnattendedCombatStartReplay.WrapAfterCreatureAdded(__0, __instance.DebugOnlyGetState(), ref __result);
+#else
         [new(typeof(CombatManager), "AfterCreatureAdded", [typeof(Creature), typeof(CombatState)])];
     public static void Postfix(Creature __0, CombatState __1, ref Task __result)
         => UnattendedCombatStartReplay.WrapAfterCreatureAdded(__0, __1, ref __result);
+#endif
 }

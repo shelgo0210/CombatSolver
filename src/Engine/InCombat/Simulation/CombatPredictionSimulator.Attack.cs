@@ -150,7 +150,11 @@ internal sealed partial class CombatPredictionSimulator
                     attackCommand.DamageProps,
                     attacker,
                     cardSource,
+#if STS2_LEGACY_107
+                    attackCommand.GetLegacyCardPlay());
+#else
                     attackCommand.CardPlay);
+#endif
                 if (HasPendingChoice)
                     return;
                 attackCommand.AddResultsInternal(results);

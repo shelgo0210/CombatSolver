@@ -39,7 +39,9 @@ internal static partial class PredictionCoverage
             HexPower when method == "AfterDeath" => true,
             ShrinkPower when method == "AfterDeath" => true,
             DecimillipedeSegment when method == "AfterDeath" => true,
+#if !STS2_LEGACY_107
             ConcoctPower when method == "AfterDamageGiven" => true,
+#endif
             CorrosiveWavePower when method == "AfterCardDrawn" => true,
             CardModel card when method == "OnPlay"
                 && (CardOnPlayCompensationCatalog.Contains(card) || CardEffectSpecRegistry.Contains(card)) => true,

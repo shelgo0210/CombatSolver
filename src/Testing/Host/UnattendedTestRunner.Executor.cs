@@ -954,7 +954,11 @@ internal sealed partial class UnattendedTestRunner
             }
             if (request.ScenarioId == "EXTRA-TURN-MIRROR-ORDER")
             {
+#if STS2_LEGACY_107
+                throw new NotSupportedException("EXTRA-TURN-MIRROR-ORDER requires AmbergrisPower (v0.108+).");
+#else
                 await runner.AssertExtraTurnMirrorsAsync(combatState, player);
+#endif
                 return Observation(combatEnded: false);
             }
             if (request.ScenarioId is "TURN-SETUP-DELAYED-ENERGY" or "PAELS-EYE-AUTOPOST-ORDER")
@@ -1772,8 +1776,21 @@ internal sealed partial class UnattendedTestRunner
             bool stoppedAfterNoGcRollover = false;
             bool stoppedAfterExpectedUnexpectedReplan = false;
             int maximumUnexpectedReplans = 0;
+#if STS2_LEGACY_107
+            long nextLegacyTrace = System.Environment.TickCount64 + 3000;
+#endif
             while (CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsOverOrEnding)
             {
+#if STS2_LEGACY_107
+                if (System.Environment.TickCount64 >= nextLegacyTrace)
+                {
+                    nextLegacyTrace = System.Environment.TickCount64 + 3000;
+                    Godot.GD.Print($"[CombatSolver/Legacy107] waiting-combat turn={player.PlayerCombatState?.TurnNumber} phase={player.PlayerCombatState?.Phase} enemyHp={combatState.Enemies.FirstOrDefault()?.CurrentHp} hand={player.PlayerCombatState?.Hand.Cards.Count} searching={SolverController.IsSearching} deploying={SolverController.IsDeploying} fullAuto={SolverController.FullAutoEnabled} attempts={SolverController.SearchesStartedForTesting} hasResult={SolverController.LastCompletedResultForTesting != null} failure={SolverController.LastSearchFailureForTesting?.GetType().Name}:{SolverController.LastSearchFailureForTesting?.Message}");
+                }
+#endif
+                if (SolverController.LastSearchFailureForTesting is { } searchFailure
+                    && !SolverController.IsSearching)
+                    throw new InvalidOperationException("求解器搜索已失败，不能继续等待战斗结束。", searchFailure);
                 expectedCardPlayed |= runner.WasExpectedCardPlayed();
                 expectedPotionUsed |= runner.WasExpectedPotionUsed();
                 expectedPlayerPowerObserved |= runner.HasExpectedPlayerPower(player);

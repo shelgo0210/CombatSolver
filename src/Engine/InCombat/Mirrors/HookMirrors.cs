@@ -832,7 +832,11 @@ internal static partial class HookMirrors
         var cap = decimal.MaxValue;
         foreach (var listener in IterateRunHookListeners(simulator, MirroredHookMask.ModifyDamageCap))
         {
+#if STS2_LEGACY_107
+            cap = Math.Min(cap, listener.ModifyDamageCap(target, props, dealer, cardModel));
+#else
             cap = Math.Min(cap, listener.ModifyDamageCap(target, props, dealer, cardModel, cardPlay));
+#endif
         }
 
         return Math.Max(0, Math.Min(damage, cap));

@@ -41,7 +41,7 @@ internal sealed partial class UnattendedTestRunner
                 PredictedCard card = state.Hand.Cards.Single();
                 var play = new CardPlay
                 {
-                    Card = card.Preview, Player = player, Target = null,
+                    Card = card.Preview, Target = null,
                     ResultPile = PileType.Discard, PlayIndex = 0, PlayCount = 1,
                     Resources = new ResourceInfo
                     {

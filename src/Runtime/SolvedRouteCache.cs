@@ -42,7 +42,11 @@ internal sealed class SolvedRouteCache(string path)
                 Id = mod.manifest?.id,
                 Version = mod.version?.ToString(),
                 mod.state,
+                #if STS2_LEGACY_107
+                Assemblies = mod.assembly is null ? Array.Empty<Guid>() : [mod.assembly.ManifestModule.ModuleVersionId],
+#else
                 Assemblies = mod.assemblies.Select(assembly => assembly.ManifestModule.ModuleVersionId).ToArray(),
+#endif
             }).ToArray(),
             Seed = state.RunState.Rng.StringSeed,
             state.RunState.CurrentActIndex,

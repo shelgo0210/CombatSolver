@@ -20,7 +20,9 @@ internal static class PotionOnUseSupport
             or SkillPotion
             or PowerPotion
             or ColorlessPotion
+#if !STS2_LEGACY_107
             or Ambergris
+#endif
             or Ashwater
             or BeetleJuice
             or BlessingOfTheForge
@@ -97,6 +99,7 @@ internal static class PotionOnUseSupport
                 simulator.History.CardGenerationOptions(generated.Cards);
                 break;
             }
+#if !STS2_LEGACY_107
             case Ambergris value:
                 simulator.Heal(
                     playerTarget,
@@ -104,6 +107,7 @@ internal static class PotionOnUseSupport
                         * value.DynamicVars["HealPercent"].BaseValue / 100m);
                 combat.Apply<AmbergrisPower>(playerTarget, 1, owner);
                 break;
+#endif // v0.107.1 absent content
             case Ashwater or DropletOfPrecognition or GamblersBrew or LiquidMemories or TouchOfInsanity:
                 break;
             case BeetleJuice value when target != null:

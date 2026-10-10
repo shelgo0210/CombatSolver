@@ -16,7 +16,7 @@ internal sealed partial class UnattendedTestRunner
         CombatPredictionSimulator simulator = new(new SimulatedCombatState(combat));
         CardPlay Play(int index) => new()
         {
-            Card = card, Player = player, Target = null, ResultPile = PileType.Discard,
+            Card = card, Target = null, ResultPile = PileType.Discard,
             Resources = default, IsAutoPlay = false, PlayIndex = index, PlayCount = 1
         };
         CardPlay first = Play(0), other = Play(1);
@@ -41,7 +41,7 @@ internal sealed partial class UnattendedTestRunner
         if (simulator.StateStore.HasEntries<CardPlayPairPredictionState>())
             throw new InvalidOperationException("Removed pair state was recreated by cleanup.");
 
-        PaelsLegion relic = ModelDb.All.OfType<PaelsLegion>().Single();
+        PaelsLegion relic = ModelDb._contentById.Values.OfType<PaelsLegion>().Single();
         PaelsLegionPredictionState state = simulator.StateStore.Get(
             relic, static value => new PaelsLegionPredictionState(value));
         state.AffectedCardPlay = other;

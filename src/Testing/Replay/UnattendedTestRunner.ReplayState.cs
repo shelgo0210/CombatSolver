@@ -902,13 +902,13 @@ internal sealed partial class UnattendedTestRunner
                 && entry.Card.Type == CardType.Status);
         int actualZeroCostAttackStarts = CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
             entry.HappenedThisTurn(combatState)
-            && entry.CardPlay.Player == player
+            && entry.CardPlay.Card.Owner == player
             && entry.CardPlay.Card.Type == CardType.Attack
             && entry.CardPlay.Resources.EnergyValue == 0);
         int actualCardPlayStarts = CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
-            entry.HappenedThisTurn(combatState) && entry.CardPlay.Player == player);
+            entry.HappenedThisTurn(combatState) && entry.CardPlay.Card.Owner == player);
         int actualAttackSkillStarts = CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
-            entry.HappenedThisTurn(combatState) && entry.CardPlay.Player == player
+            entry.HappenedThisTurn(combatState) && entry.CardPlay.Card.Owner == player
             && entry.CardPlay.Card.Type is CardType.Attack or CardType.Skill);
         if (values.Length >= 3 && (!int.TryParse(values[2], out int expectedStarts) || expectedStarts != actualCardPlayStarts)
             || values.Length == 4 && (!int.TryParse(values[3], out int expectedAttackSkills) || expectedAttackSkills != actualAttackSkillStarts))

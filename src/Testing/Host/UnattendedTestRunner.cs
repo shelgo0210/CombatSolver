@@ -2349,6 +2349,9 @@ internal sealed partial class UnattendedTestRunner
         string previousStage = _stage;
         _stage = stage;
         _stageStartedMilliseconds = elapsedMilliseconds;
+#if STS2_LEGACY_107
+        Godot.GD.Print($"[CombatSolver/Unattended] STAGE run_id={_request.RunId} stage={stage} elapsed_ms={elapsedMilliseconds:F1}");
+#endif
         Entry.Logger.Info(
             $"[CombatSolver/Unattended] STAGE run_id={_request.RunId} stage={stage} " +
             $"elapsed_ms={elapsedMilliseconds:F1} previous_stage={previousStage} " +

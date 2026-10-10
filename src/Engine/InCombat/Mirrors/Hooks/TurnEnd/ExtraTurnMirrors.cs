@@ -42,16 +42,20 @@ internal static class ExtraTurnMirrors
 
     static ExtraTurnMirrors()
     {
+#if !STS2_LEGACY_107
         ShouldRegistry.Register<AmbergrisPower>(static (power, context) =>
             ReferenceEquals(power.Owner.Player, context.Player)
             && context.Combat.GetAmount<AmbergrisPower>(power.Owner) > 0);
+#endif // legacy missing AmbergrisPower
         ShouldRegistry.Register<PaelsEye>(static (relic, context) =>
             ReferenceEquals(relic.Owner, context.Player) && context.Combat.ShouldTriggerPaelsEye(relic));
+#if !STS2_LEGACY_107
         AfterRegistry.Register<AmbergrisPower>(static (power, context) =>
         {
             if (ReferenceEquals(power.Owner.Player, context.Player))
                 context.Combat.SetPowerAmount(power, context.Combat.GetAmount<AmbergrisPower>(power.Owner) - 1);
         });
+#endif // legacy missing AmbergrisPower
         AfterRegistry.Register<PaelsEye>(static (relic, context) =>
         {
             if (ReferenceEquals(relic.Owner, context.Player))

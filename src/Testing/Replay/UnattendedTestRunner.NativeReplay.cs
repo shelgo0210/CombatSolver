@@ -29,7 +29,11 @@ internal sealed partial class UnattendedTestRunner
     private async Task<ScenarioContext> BuildNativeRecordedScenarioAsync()
     {
         SetStage("native_replay_startup");
+        #if STS2_LEGACY_107
+        await LegacyTestHooks.WaitForStartupAsync(_host);
+        #else
         await _host.GameStartupComplete;
+        #endif
         RecordCheckpointModDifferencesAfterStartup();
         ApplyHeadlessFastModeOverride();
         EnsureWithinDeadline();
@@ -95,7 +99,7 @@ internal sealed partial class UnattendedTestRunner
         RunManager.Instance.RewardsSetSynchronizer.FastForwardRewardIds(origin["rewardIds"]!.Deserialize<List<int>>()!);
 
         Player player = state.Players.Single();
-        EncounterModel encounter = ResolveUnique(ModelDb.All.OfType<EncounterModel>(), _request.EncounterId, "遭遇");
+        EncounterModel encounter = ResolveUnique(ModelDb._contentById.Values.OfType<EncounterModel>(), _request.EncounterId, "遭遇");
         using NativeReplayDriver driver = new(this, events, target, player, HasLegacyCostReplayEvidence());
         bool openingVerified = false;
         bool endingVerified = false;
@@ -265,7 +269,7 @@ internal sealed partial class UnattendedTestRunner
             _player = player;
             _allowLegacyCosts = allowLegacyCosts;
             CombatReplayRecording.TestObserver = Observe;
-            _selector = CardSelectCmd.PushSelector(this, localOnly: true);
+            _selector = CardSelectCmd.PushSelector(this);
             _executor = RunManager.Instance.ActionExecutor;
             _executor.AfterActionExecuted += ObserveCompletedAction;
         }

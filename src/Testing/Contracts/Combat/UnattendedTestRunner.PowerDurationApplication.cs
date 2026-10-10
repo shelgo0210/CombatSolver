@@ -64,7 +64,13 @@ internal sealed partial class UnattendedTestRunner
                 case 0: await PowerCmd.Apply<WeakPower>(new BlockingPlayerChoiceContext(), player.Creature, 1, enemy, null); break;
                 case 1: await PowerCmd.Apply<VulnerablePower>(new BlockingPlayerChoiceContext(), player.Creature, 1, enemy, null); break;
                 case 2: await PowerCmd.Apply<FrailPower>(new BlockingPlayerChoiceContext(), player.Creature, 1, enemy, null); break;
-                case 3: await Hook.AfterSideTurnEnd(combat, CombatSide.Enemy, [enemy]); break;
+                case 3:
+#if STS2_LEGACY_107
+                    await LegacyTestHooks.AfterSideTurnEndAsync(combat, CombatSide.Enemy, [enemy]);
+#else
+                    await Hook.AfterSideTurnEnd(combat, CombatSide.Enemy, [enemy]);
+#endif
+                    break;
                 case 4:
                     foreach (var power in player.Creature.Powers.ToArray()) await PowerCmd.Remove(power);
                     await PowerCmd.Apply<ArtifactPower>(new BlockingPlayerChoiceContext(), player.Creature, 3, player.Creature, null);

@@ -16,7 +16,9 @@ internal static partial class BeforeSideTurnStartMirrors
         registry.Register<MusicBox>(ApplyRelic);
         registry.Register<OrnamentalFan>(ApplyRelic);
         registry.Register<RainbowRing>(ApplyRelic);
+#if !STS2_LEGACY_107
         registry.Register<Regalite>(ApplyRelic);
+#endif
         registry.Register<Shuriken>(ApplyRelic);
         registry.Register<VelvetChoker>(ApplyRelic);
         registry.Register<Pocketwatch>(ApplyRelic);
@@ -30,7 +32,9 @@ internal static partial class BeforeSideTurnStartMirrors
         registry.Register<SlothPower>(ApplyPower);
         registry.Register<VoidFormPower>(ApplyPower);
         // 沿用覆盖目录的原版合同：演出/显示刷新没有预测状态写入。
+#if !STS2_LEGACY_107
         registry.RegisterIgnored<EchoFormPower>();
+#endif
         registry.RegisterIgnored<PaelsFlesh>();
         registry.RegisterIgnored<RippleBasin>();
         // 回合末已消费的格挡标记；不在分支中维护 live 的显示保护标记。

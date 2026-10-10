@@ -102,7 +102,7 @@ internal sealed partial class UnattendedTestRunner
         forkState.AdvancePlayerTurn(player);
         CombatPredictionSimulator nextTurn = fork.Fork();
         if (nextTurn.History.OfType<CombatPredictionCardPlayFinishedEntry>()
-                .Count(entry => entry.WasEthereal && entry.CardPlay.Player == player) != 2
+                .Count(entry => entry.WasEthereal && entry.CardPlay.Card.Owner == player) != 2
             || !ReferenceEquals(nextTurn.History[0], started)
             || state.RoundNumber == forkState.RoundNumber)
         {
@@ -208,7 +208,9 @@ internal sealed partial class UnattendedTestRunner
         => new()
         {
             Card = card.MutablePreview,
+#if !STS2_LEGACY_107
             Player = player,
+#endif
             Target = null,
             ResultPile = PileType.Discard,
             Resources = default,

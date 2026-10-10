@@ -93,7 +93,11 @@ internal sealed partial class UnattendedTestRunner
             var shadow = (SimulatedCombatState)simulator.State.CombatState;
             if (!CorePowerSupport.TriggerPlayerRegularSideTurnEndEffects(simulator, shadow, [player.Creature]))
                 throw new InvalidOperationException("Ritual fixture suspended.");
+            #if STS2_LEGACY_107
+            await LegacyTestHooks.AfterSideTurnEndAsync(combat, CombatSide.Player, [player.Creature]);
+            #else
             await Hook.AfterSideTurnEnd(combat, CombatSide.Player, [player.Creature]);
+            #endif
             var expected = CaptureSimulated(simulator, shadow, player, combat.Enemies[0]);
             AssertSnapshotEqual(expected, CaptureActual(combat, player, combat.Enemies[0]), "Ritual", $"TemporaryStrengthOrder:{ritualFirst}");
             var fork = simulator.Fork();
@@ -109,7 +113,11 @@ internal sealed partial class UnattendedTestRunner
         await InjectPowerAsync(combat, player, new() { PowerId = "SLEIGHT_OF_FLESH_POWER", Target = "Player", Amount = 9 });
         var shield = combat.Enemies.Single(creature => creature.Monster!.Id.Entry == "LIVING_SHIELD");
         await PowerCmd.Apply<RampartPower>(new BlockingPlayerChoiceContext(), shield, 25, shield, null);
+        #if STS2_LEGACY_107
+        foreach (var enemy in combat.Enemies) await CreatureCmd.LoseBlock(enemy, enemy.Block);
+        #else
         foreach (var enemy in combat.Enemies) await CreatureCmd.LoseBlock(new BlockingPlayerChoiceContext(), enemy, enemy.Block, null);
+        #endif
         var simulator = CombatRootSnapshot.Capture(combat).ForkSimulator();
         var shadow = (SimulatedCombatState)simulator.State.CombatState;
         if (!PersistentPowerSupport.TriggerAfterSideTurnStart(simulator, shadow, CombatSide.Player, [player.Creature]))
@@ -131,7 +139,7 @@ internal sealed partial class UnattendedTestRunner
             await ClearOrderedEffectFixtureAsync(combat, player);
             int previousBlocks = CombatManager.Instance.History.Entries.OfType<BlockGainedEntry>()
                 .Count(entry => entry.HappenedThisTurn(combat) && entry.CardPlay != null
-                    && entry.CardPlay.Player == player && entry.Props.IsCardOrMonsterMove());
+                    && entry.CardPlay.Card.Owner == player && entry.Props.IsCardOrMonsterMove());
             await InjectPowerAsync(combat, player, new() { PowerId = "UNMOVABLE_POWER", Target = "Player", Amount = previousBlocks + 1 });
             if (id == "DEATHS_DOOR")
                 await PowerCmd.Apply<DoomPower>(new BlockingPlayerChoiceContext(), combat.Enemies[0], 1, player.Creature, null);

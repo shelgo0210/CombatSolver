@@ -16,7 +16,11 @@ internal static class CardResultLocationMirrors
 {
     private static readonly MirrorMethodSpec GetResultLocationForCardPlay = new(
         typeof(CardModel),
+#if STS2_LEGACY_107
+        "GetResultPileTypeForCardPlay",
+#else
         "GetResultLocationForCardPlay",
+#endif
         BindingFlags.Instance | BindingFlags.NonPublic,
         []);
 
@@ -41,7 +45,9 @@ internal static class CardResultLocationMirrors
         var registry = new Registry(GetResultLocationForCardPlay);
 
         registry.Register<ParticleWall>(HandleParticleWall);
+#if !STS2_LEGACY_107
         registry.Register<ShiningStrike>(HandleShiningStrike);
+#endif
 #if !STS2_LEGACY_107
         registry.Register<TheBall>(HandleTheBall);
 #endif // STS2_LEGACY_107

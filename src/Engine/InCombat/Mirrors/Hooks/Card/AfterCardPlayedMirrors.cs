@@ -99,10 +99,15 @@ internal static class AfterCardPlayedMirrors
         registry.Register<CalamityPower>(HandleCalamityPower);
         registry.Register<CurlUpPower>(HandleCurlUpPower);
         registry.Register<DevourLifePower>(HandleDevourLifePower);
+#if !STS2_LEGACY_107
         registry.RegisterIgnored<EchoFormPower>();
+#endif
         registry.Register<EnragePower>(HandleEnragePower);
         registry.Register<GalvanicPower>(HandleGalvanicPower);
         registry.Register<GravityPower>(HandleGravityPower);
+#if STS2_LEGACY_107
+        registry.Register<JugglingPower>(HandleLegacyJugglingPower);
+#endif
         registry.Register<HauntPower>(HandleHauntPower);
 #if !STS2_LEGACY_107
         registry.Register<ImitationLearningPower>(HandleImitationLearningPower);
@@ -110,7 +115,9 @@ internal static class AfterCardPlayedMirrors
         registry.Register<MasterPlannerPower>(HandleMasterPlannerPower);
         registry.Register<MonologuePower>(HandleMonologuePower);
         registry.Register<OblivionPower>(HandleOblivionPower);
+#if !STS2_LEGACY_107
         registry.RegisterIgnored<PaleBlueDotPower>();
+#endif
         registry.Register<PanachePower>(HandlePanachePower);
         registry.Register<RagePower>(HandleRagePower);
         registry.Register<RupturePower>(HandleRupturePower);
@@ -665,6 +672,27 @@ internal static class AfterCardPlayedMirrors
             nestedChoiceSourceId: power.Id.Entry);
     }
 #endif // STS2_LEGACY_107
+
+#if STS2_LEGACY_107
+    // The old game applies the third-attack clone after the card resolves, not before.
+    private static void HandleLegacyJugglingPower(JugglingPower power, AfterCardPlayedMirrorContext context)
+    {
+        if (context.PreviewCard.Owner != power.Owner.Player || context.PreviewCard.Type != CardType.Attack)
+            return;
+        var state = context.StateStore.Get(power, () => new JugglingPredictionState(power));
+        state.AttacksPlayedThisTurn++;
+        if (state.AttacksPlayedThisTurn != 3)
+            return;
+        for (int i = 0; i < power.Amount; i++)
+        {
+            context.Simulator.AddGeneratedCardToCombat(
+                context.Card.CreateClone(), PileType.Hand, power.Owner.Player,
+                resultKind: CardGenerationResultKind.Contextual);
+            if (context.Simulator.HasPendingChoice)
+                return;
+        }
+    }
+#endif
 
     private static void HandleMonologuePower(MonologuePower power, AfterCardPlayedMirrorContext context)
     {

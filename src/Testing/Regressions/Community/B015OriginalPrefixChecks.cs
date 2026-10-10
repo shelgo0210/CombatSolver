@@ -110,7 +110,11 @@ internal sealed partial class UnattendedTestRunner
     private async Task<ScenarioContext> BuildB015OriginalPrefixScenarioAsync()
     {
         SetStage("b015_t016_original_start");
+        #if STS2_LEGACY_107
+        await LegacyTestHooks.WaitForStartupAsync(_host);
+        #else
         await _host.GameStartupComplete;
+        #endif
         RecordCheckpointModDifferencesAfterStartup();
         ApplyHeadlessFastModeOverride();
         EnsureWithinDeadline();
@@ -172,9 +176,9 @@ internal sealed partial class UnattendedTestRunner
         RunManager.Instance.PlayerChoiceSynchronizer.FastForwardChoiceIds(origin["choiceIds"]!.Deserialize<List<uint>>()!);
         RunManager.Instance.RewardsSetSynchronizer.FastForwardRewardIds(origin["rewardIds"]!.Deserialize<List<int>>()!);
         Player player = state.Players.Single();
-        EncounterModel encounter = ResolveUnique(ModelDb.All.OfType<EncounterModel>(), _request.EncounterId, "遭遇");
+        EncounterModel encounter = ResolveUnique(ModelDb._contentById.Values.OfType<EncounterModel>(), _request.EncounterId, "遭遇");
         B015OpeningSelector selector = new(player, choices[0]);
-        IDisposable selectorScope = CardSelectCmd.PushSelector(selector, localOnly: true);
+        IDisposable selectorScope = CardSelectCmd.PushSelector(selector);
         List<RecordedCombatEvent> observedEvents = [];
         CombatReplayRecording.TestObserver = observedEvents.Add;
         bool openingVerified = false;

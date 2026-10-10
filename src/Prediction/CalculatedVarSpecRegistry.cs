@@ -167,7 +167,7 @@ internal static class CalculatedVarSpecRegistry
     private static int CountEtherealPlays(CombatPredictionSimulator simulator, Player player)
         => ((SimulatedCombatState)simulator.State.CombatState).GetEtherealPlaysBeforePrediction(player)
            + simulator.History.OfType<CombatPredictionCardPlayFinishedEntry>()
-               .Count(entry => entry.CardPlay.Player == player && entry.WasEthereal);
+               .Count(entry => entry.CardPlay.Card.Owner == player && entry.WasEthereal);
 
     private static int CountFinishedCardPlays(CombatPredictionSimulator simulator)
         => ((SimulatedCombatState)simulator.State.CombatState).GetFinishedPlaysBeforePrediction()

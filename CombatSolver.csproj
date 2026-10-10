@@ -81,7 +81,7 @@
     <Error Condition="'$(ShowcaseCertificateSha256)' == ''" Text="发布构建缺少 ShowcaseCertificateSha256。" />
   </Target>
 
-  <Target Name="BuildMemoryCleaner" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+  <Target Name="BuildMemoryCleaner" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT' and '$(SkipMemoryCleaner)' != 'true'">
     <MSBuild Projects="$(MemoryCleanerProject)" Targets="Restore" Properties="Configuration=$(Configuration)" />
     <MSBuild Projects="$(MemoryCleanerProject)" Targets="Build" Properties="Configuration=$(Configuration)" />
   </Target>

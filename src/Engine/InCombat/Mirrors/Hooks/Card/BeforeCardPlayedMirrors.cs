@@ -59,7 +59,9 @@ internal static class BeforeCardPlayedMirrors
 #if !STS2_LEGACY_107
         registry.Register<ImitationLearningPower>(HandleImitationLearningPower);
 #endif // STS2_LEGACY_107
+#if !STS2_LEGACY_107
         registry.Register<JugglingPower>(HandleJugglingPower);
+#endif
         registry.Register<MonologuePower>(HandleMonologuePower);
         registry.Register<OblivionPower>(HandleOblivionPower);
         registry.Register<RupturePower>(HandleRupturePower);

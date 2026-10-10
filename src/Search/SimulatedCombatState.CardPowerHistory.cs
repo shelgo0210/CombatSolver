@@ -68,7 +68,7 @@ internal sealed partial class SimulatedCombatState
         value = _rootHistory.CardPlaysStarted.Count(entry =>
             entry.HappenedThisTurn(this)
             && entry.CardPlay.Card.Type == CardType.Attack
-            && entry.CardPlay.Player.Creature == owner);
+            && entry.CardPlay.Card.Owner.Creature == owner);
         (_attacksPlayedThisTurn ??= [])[owner] = value;
         return value;
     }
@@ -80,7 +80,7 @@ internal sealed partial class SimulatedCombatState
         value = _rootHistory.CardPlaysFinished.Count(entry =>
             entry.HappenedThisTurn(this)
             && entry.CardPlay.Card.Tags.Contains(CardTag.Shiv)
-            && entry.CardPlay.Player.Creature == owner);
+            && entry.CardPlay.Card.Owner.Creature == owner);
         (_shivsPlayedThisTurn ??= [])[owner] = value;
         return value;
     }
@@ -91,7 +91,7 @@ internal sealed partial class SimulatedCombatState
             return value;
         value = _rootHistory.BlockGained.Count(entry =>
             entry.HappenedThisTurn(this)
-            && entry.CardPlay?.Player.Creature == owner
+            && entry.CardPlay?.Card.Owner.Creature == owner
             && entry.Props.IsCardOrMonsterMove());
         (_blockCardsPlayedThisTurn ??= [])[owner] = value;
         return value;

@@ -164,6 +164,7 @@ internal sealed partial class SimulatedCombatState
                 case Bellows when turn <= 1:
                     UpgradeHand(simulator, player);
                     break;
+#if !STS2_LEGACY_107
                 case BoneTea when turn <= 1:
                 {
                     StatefulRelicState state = GetStatefulRelicState(relic);
@@ -174,6 +175,7 @@ internal sealed partial class SimulatedCombatState
                     }
                     break;
                 }
+#endif
                 case BloodVial when turn <= 1:
                 case FakeBloodVial when turn <= 1:
                     simulator.Heal(player.Creature, relic.DynamicVars.Heal.BaseValue);
@@ -264,6 +266,7 @@ internal sealed partial class SimulatedCombatState
                             player.Creature);
                     }
                     break;
+#if !STS2_LEGACY_107
                 case ToastyMittens:
                     if (!simulator.State.GetPlayerCombatState(player).Hand.IsEmpty
                         && !TurnStartChoiceSupport.Resolve(
@@ -283,6 +286,7 @@ internal sealed partial class SimulatedCombatState
                         relic.DynamicVars.Strength.IntValue,
                         player.Creature);
                     break;
+#endif
                 case VexingPuzzlebox when turn <= 1:
                 {
                     PredictedCard generated = player.Character.CardPool
@@ -323,6 +327,19 @@ internal sealed partial class SimulatedCombatState
             RelicPredictionStateSupport.ResetAfterSideTurnStart(simulator, relic, turn);
             switch (relic)
             {
+#if STS2_LEGACY_107
+                case BoneTea when turn <= 1:
+                {
+                    StatefulRelicState tea = GetStatefulRelicState(relic);
+                    if (tea.Current > 0)
+                    {
+                        // Native v0.107.1: upgrade the hand AFTER side turn starts.
+                        UpgradeHand(simulator, relic.Owner);
+                        SetStatefulRelicState(relic, tea with { Current = tea.Current - 1 });
+                    }
+                    break;
+                }
+#endif
                 case Akabeko when turn <= 1:
                     Apply<VigorPower>(relic.Owner.Creature, relic.DynamicVars["VigorPower"].IntValue, relic.Owner.Creature);
                     break;

@@ -19,9 +19,11 @@ namespace CombatSolver;
 
 internal sealed class PlayerTurnSetupPatch : IPatchMethod
 {
+#if !STS2_LEGACY_107
     private static readonly Type CombatTurnStateType = typeof(CombatManager).Assembly.GetType(
         "MegaCrit.Sts2.Core.Combat.CombatTurnState",
         throwOnError: true)!;
+#endif
 
     public static string PatchId => "combat_solver_player_turn_setup";
     public static string Description => "首回合页面后搜索，后续回合可见重放既有选择";
@@ -31,9 +33,29 @@ internal sealed class PlayerTurnSetupPatch : IPatchMethod
         new(
             typeof(CombatManager),
             "SetupPlayerTurn",
+#if STS2_LEGACY_107
+            [typeof(Player), typeof(HookPlayerChoiceContext)]),
+#else
             [CombatTurnStateType, typeof(Player), typeof(HookPlayerChoiceContext)]),
+#endif
     ];
 
+#if STS2_LEGACY_107
+    [HarmonyPriority(Priority.First)]
+    public static bool Prefix(
+        CombatManager __instance,
+        Player __0,
+        HookPlayerChoiceContext __1,
+        ref Task __result)
+    {
+        if (UnattendedTestRunner.IsReplayingRecordedInputs)
+            return true;
+        if (!PlayerTurnSetupCoordinator.TryInterceptSetup(__instance, __instance, __0, __1, out Task? task))
+            return true;
+        __result = task!;
+        return false;
+    }
+#else
     [HarmonyPriority(Priority.First)]
     public static bool Prefix(
         CombatManager __instance,
@@ -49,13 +71,16 @@ internal sealed class PlayerTurnSetupPatch : IPatchMethod
         __result = task!;
         return false;
     }
+#endif
 }
 
 internal sealed class PlayerTurnAutoPrePlayPatch : IPatchMethod
 {
+#if !STS2_LEGACY_107
     private static readonly Type CombatTurnStateType = typeof(CombatManager).Assembly.GetType(
         "MegaCrit.Sts2.Core.Combat.CombatTurnState",
         throwOnError: true)!;
+#endif
 
     public static string PatchId => "combat_solver_player_turn_auto_pre_play";
     public static string Description => "回合准备自动牌通过原生页面执行计划选择";
@@ -65,9 +90,36 @@ internal sealed class PlayerTurnAutoPrePlayPatch : IPatchMethod
         new(
             typeof(CombatManager),
             "RunAutoPrePlayPhase",
+#if STS2_LEGACY_107
+            [typeof(HookPlayerChoiceContext), typeof(Task), typeof(Player)]),
+#else
             [CombatTurnStateType, typeof(HookPlayerChoiceContext), typeof(Task), typeof(Player)]),
+#endif
     ];
 
+#if STS2_LEGACY_107
+    [HarmonyPriority(Priority.First)]
+    public static bool Prefix(
+        CombatManager __instance,
+        HookPlayerChoiceContext __0,
+        Task __1,
+        Player __2,
+        ref Task __result)
+    {
+        if (UnattendedTestRunner.IsReplayingRecordedInputs)
+            return true;
+        if (!PlayerTurnSetupCoordinator.TryInterceptAutoPrePlay(
+                __instance,
+                __instance,
+                __0,
+                __1,
+                __2,
+                out Task? task))
+            return true;
+        __result = task!;
+        return false;
+    }
+#else
     [HarmonyPriority(Priority.First)]
     public static bool Prefix(
         CombatManager __instance,
@@ -92,6 +144,7 @@ internal sealed class PlayerTurnAutoPrePlayPatch : IPatchMethod
         __result = task!;
         return false;
     }
+#endif
 }
 
 internal sealed class PlayerTurnSetupSceneExitPatch : IPatchMethod
@@ -161,21 +214,31 @@ internal static class PlayerTurnSetupCoordinator
             TaskCreationOptions.RunContinuationsAsynchronously);
     }
 
+#if !STS2_LEGACY_107
     private static readonly Type CombatTurnStateType = typeof(CombatManager).Assembly.GetType(
         "MegaCrit.Sts2.Core.Combat.CombatTurnState",
         throwOnError: true)!;
+#endif
     private static readonly MethodInfo SetupPlayerTurnMethod = typeof(CombatManager).GetMethod(
         "SetupPlayerTurn",
         BindingFlags.Instance | BindingFlags.NonPublic,
         binder: null,
+#if STS2_LEGACY_107
+        [typeof(Player), typeof(HookPlayerChoiceContext)],
+#else
         [CombatTurnStateType, typeof(Player), typeof(HookPlayerChoiceContext)],
+#endif
         modifiers: null)
         ?? throw new MissingMethodException(typeof(CombatManager).FullName, "SetupPlayerTurn");
     private static readonly MethodInfo RunAutoPrePlayPhaseMethod = typeof(CombatManager).GetMethod(
         "RunAutoPrePlayPhase",
         BindingFlags.Instance | BindingFlags.NonPublic,
         binder: null,
+#if STS2_LEGACY_107
+        [typeof(HookPlayerChoiceContext), typeof(Task), typeof(Player)],
+#else
         [CombatTurnStateType, typeof(HookPlayerChoiceContext), typeof(Task), typeof(Player)],
+#endif
         modifiers: null)
         ?? throw new MissingMethodException(typeof(CombatManager).FullName, "RunAutoPrePlayPhase");
 
@@ -904,7 +967,11 @@ internal static class PlayerTurnSetupCoordinator
         {
             Task original = (Task)(SetupPlayerTurnMethod.Invoke(
                 manager,
+#if STS2_LEGACY_107
+                [player, choiceContext])
+#else
                 [turnState, player, choiceContext])
+#endif
                 ?? throw new InvalidOperationException("SetupPlayerTurn 没有返回任务。"));
             _invokingOriginalSetup = false;
             await original;
@@ -929,7 +996,11 @@ internal static class PlayerTurnSetupCoordinator
             _invokingOriginalAutoPrePlay = true;
             original = (Task)(RunAutoPrePlayPhaseMethod.Invoke(
                 manager,
+#if STS2_LEGACY_107
+                [choiceContext, setupTask, player])
+#else
                 [turnState, choiceContext, setupTask, player])
+#endif
                 ?? throw new InvalidOperationException("RunAutoPrePlayPhase 没有返回任务。"));
             _invokingOriginalAutoPrePlay = false;
             NGame host = NGame.Instance

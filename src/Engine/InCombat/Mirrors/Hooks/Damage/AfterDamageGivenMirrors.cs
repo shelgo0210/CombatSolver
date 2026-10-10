@@ -4,6 +4,9 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Achievements;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+#if STS2_LEGACY_107
+using MegaCrit.Sts2.Core.Models.Relics;
+#endif
 using MegaCrit.Sts2.Core.ValueProps;
 using CombatSolver.Engine.Common;
 using CombatSolver.Engine.Common.Mirrors;
@@ -42,6 +45,9 @@ internal static class AfterDamageGivenMirrors
         registry.Register<ConcoctPower>(HandleConcoctPower);
 #endif // STS2_LEGACY_107
         registry.Register<EnvenomPower>(HandleEnvenomPower);
+#if STS2_LEGACY_107
+        registry.Register<HandDrill>(HandleLegacyHandDrill);
+#endif
         registry.RegisterIgnored<ImbalancedPower>();
         registry.Register<MonarchsGazePower>(HandleMonarchsGazePower);
         registry.Register<PaperCutsPower>(HandlePaperCutsPower);
@@ -65,6 +71,21 @@ internal static class AfterDamageGivenMirrors
         }
     }
 #endif // STS2_LEGACY_107
+
+#if STS2_LEGACY_107
+    // v0.107.1 implements HandDrill on AfterDamageGiven, conditional on WasBlockBroken.
+    private static void HandleLegacyHandDrill(HandDrill relic, AfterDamageGivenMirrorContext context)
+    {
+        if (context.Dealer != relic.Owner.Creature && context.Dealer?.PetOwner != relic.Owner)
+            return;
+        if (context.Target.IsPlayer || !context.Result.WasBlockBroken)
+            return;
+        Effects(context).ApplyPowerFromSource(
+            typeof(VulnerablePower), context.Target,
+            checked((int)relic.DynamicVars.Vulnerable.BaseValue),
+            relic.Owner.Creature, cardSource: null);
+    }
+#endif
 
     private static void HandleEnvenomPower(EnvenomPower power, AfterDamageGivenMirrorContext context)
     {

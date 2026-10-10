@@ -70,7 +70,9 @@ internal static class BeforeSideTurnEndMirrors
         var registry = new Registry(BeforeSideTurnEndEarly);
 
         registry.Register<PlatingPower>(HandlePlatingPower);
+#if !STS2_LEGACY_107
         registry.Register<RegenPower>(HandleRegenPower);
+#endif
         registry.Register<PaelsEye>(HandlePaelsEye);
 
         return registry;

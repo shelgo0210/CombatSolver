@@ -83,7 +83,11 @@ internal sealed partial class UnattendedTestRunner
             expected = CaptureSimulated(prediction, (SimulatedCombatState)prediction.State.CombatState, player, enemy);
             expectedPowers = SurgicalPowerValues(((SimulatedCombatState)prediction.State.CombatState).EffectivePowers()).ToArray();
         }
+        #if STS2_LEGACY_107
+        await LegacyTestHooks.AfterSideTurnEndAsync(combat, CombatSide.Enemy, [enemy]);
+        #else
         await Hook.AfterSideTurnEnd(combat, CombatSide.Enemy, [enemy]);
+        #endif
         await RunManager.Instance.ActionExecutor.FinishedExecutingActions();
         var actual = CaptureActual(combat, player, enemy);
         AssertSnapshotEqual(expected, actual, "PowerDurationKeys", "NativeTick");

@@ -390,10 +390,13 @@ $memoryCleaner = if ([string]::IsNullOrWhiteSpace($CombatSolverBuildDir)) {
     Join-Path $repositoryRoot '.local\tool-build\CombatSolver.MemoryCleaner\bin\Release\net48\CombatSolver.MemoryCleaner.exe'
 } else { Join-Path $buildDirectory 'CombatSolver.MemoryCleaner.exe' }
 $resolvedRitsuWorkshopRoot = [IO.Path]::GetFullPath($RitsuWorkshopRoot)
-$ritsuLegacyDll = Join-Path $resolvedRitsuWorkshopRoot "lib\0.111.0\STS2-RitsuLib.dll"
+$releaseInfo = Get-Content -LiteralPath (Join-Path $sourceGameRoot "release_info.json") -Raw | ConvertFrom-Json
+$targetGameVersion = [string]$releaseInfo.version -replace "^v", ""
+if ($targetGameVersion -notmatch "^\d+\.\d+\.\d+$") { throw "Unexpected source game version: $($releaseInfo.version)" }
+$ritsuLegacyDll = Join-Path $resolvedRitsuWorkshopRoot "lib\$targetGameVersion\STS2-RitsuLib.dll"
 $ritsuBundleDll = Join-Path $resolvedRitsuWorkshopRoot "STS2-RitsuLib.dll"
 $ritsuBundleIndex = Join-Path $resolvedRitsuWorkshopRoot "ritsulib-variants.manifest"
-$ritsuBundleRuntime = Join-Path $resolvedRitsuWorkshopRoot "compat\0.111.0\STS2-RitsuLib.Runtime.dll"
+$ritsuBundleRuntime = Join-Path $resolvedRitsuWorkshopRoot "compat\$targetGameVersion\STS2-RitsuLib.Runtime.dll"
 $ritsuBundleShared = Join-Path $resolvedRitsuWorkshopRoot "shared\STS2-RitsuLib.Shared.dll"
 $ritsuManifestSource = Join-Path $resolvedRitsuWorkshopRoot "mod_manifest.json"
 $headlessDependencyDir = Join-Path $gameModsRoot ".combatsolver-headless-ritsulib"
@@ -1523,6 +1526,15 @@ throw [TimeoutException]::new("Unattended test exceeded the launcher timeout; it
                 }
             } finally {
                 $launcherLock.Dispose()
+                if ($EvidenceDirectory) {
+                    foreach ($name in @('godot-headless.log', 'native-stderr.log')) {
+                        $diagnostic = Join-Path $headlessRoot $name
+                        if (Test-Path -LiteralPath $diagnostic -PathType Leaf) {
+                            try { Copy-Item -LiteralPath $diagnostic -Destination (Join-Path $EvidenceDirectory $name) -Force -ErrorAction Stop }
+                            catch { Write-Warning "Unable to retain $name : $($_.Exception.Message)" }
+                        }
+                    }
+                }
                 if ($CleanupInstanceOnExit.IsPresent) {
                     Remove-HeadlessRuntimeInstance $runtimeContext
                 }

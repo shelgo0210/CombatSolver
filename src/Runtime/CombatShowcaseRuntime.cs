@@ -79,7 +79,12 @@ internal static class CombatShowcaseRuntime
             await RunManager.Instance.GenerateMap();
 
             string encounterId = RequiredString(metadata, "encounterId");
-            EncounterModel encounter = ModelDb.All.OfType<EncounterModel>()
+            EncounterModel encounter =
+#if STS2_LEGACY_107
+                ModelDb.AllEncounters
+#else
+                ModelDb.All.OfType<EncounterModel>()
+#endif
                 .Single(candidate => string.Equals(candidate.Id.Entry, encounterId, StringComparison.Ordinal));
             await RunManager.Instance.EnterRoomDebug(RoomType.Boss, MapPointType.Boss, encounter.ToMutable());
             await RunManager.Instance.ActionExecutor.FinishedExecutingActions();
@@ -280,8 +285,13 @@ internal sealed class CombatShowcaseSaveIsolationPatch : STS2RitsuLib.Patching.M
     public static string PatchId => "combat_solver_showcase_save_isolation";
     public static string Description => "录像临时跑局不递增正式存档的重载计数";
     public static STS2RitsuLib.Patching.Models.ModPatchTarget[] GetTargets()
+#if STS2_LEGACY_107
+        => [new(typeof(SaveManager), nameof(SaveManager.IncrementNumReloads),
+            [typeof(SerializableRun), typeof(bool)])];
+#else
         => [new(typeof(SaveManager), nameof(SaveManager.IncrementNumReloads),
             [typeof(SerializableRun), typeof(MegaCrit.Sts2.Core.Multiplayer.Game.NetGameType), typeof(bool)])];
+#endif
 
     public static bool Prefix(SerializableRun save, ref Task __result)
     {

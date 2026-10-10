@@ -44,15 +44,24 @@ internal static partial class EndTurnPowerSupport
                 case TemporaryStrengthPower temporaryStrength when ownerParticipates:
                     combat.RetireTemporaryStat(temporaryStrength);
                     break;
+#if STS2_LEGACY_107
+                // 0.107.1 fires Regen AFTER the side turn, heals, then decrements the power.
+                case RegenPower when ownerParticipates && simulator.State.GetCreature(owner).IsAlive:
+                    simulator.Heal(owner, power.Amount);
+                    combat.SetPowerAmount(power, power.Amount - 1);
+                    break;
+#endif
                 case RitualPower when ownerParticipates:
                     PersistentPowerSupport.TriggerRitual(combat, owner);
                     break;
                 case ColossusPower when side == CombatSide.Enemy:
                     combat.SetAmount<ColossusPower>(owner, power.Amount - 1);
                     break;
+#if !STS2_LEGACY_107
                 case ConcoctPower when owner.Side != side:
                     combat.SetAmount<ConcoctPower>(owner, 0);
                     break;
+#endif // v0.107.1 absent content
                 case CorrosiveWavePower when ownerParticipates:
                     combat.SetAmount<CorrosiveWavePower>(owner, 0);
                     break;

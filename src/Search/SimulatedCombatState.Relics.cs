@@ -38,11 +38,25 @@ internal sealed partial class SimulatedCombatState
         => ContinueRelicsBeforeHandDraw(simulator, player, choices, RelicsOf(player).ToArray(), GetPlayerTurnNumber(player), 0);
 
     private bool ContinueRelicsBeforeHandDraw(CombatPredictionSimulator simulator, Player player,
-        TurnStartChoiceCursor choices, IReadOnlyList<RelicModel> relics, int turn, int nextIndex)
+        TurnStartChoiceCursor choices, IReadOnlyList<RelicModel> relics, int turn, int nextIndex, bool applyMittensStrength = false)
     {
         for (int relicIndex = nextIndex; relicIndex < relics.Count; relicIndex++)
         {
             RelicModel relic = relics[relicIndex];
+#if STS2_LEGACY_107
+            if (applyMittensStrength)
+            {
+                Apply<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>(
+                    player.Creature, relic.DynamicVars.Strength.IntValue, player.Creature);
+                applyMittensStrength = false;
+                if (simulator.HasPendingChoice)
+                {
+                    simulator.AppendExecutionContinuation(new BeforeHandDrawRelicFrame(player, relics, turn, relicIndex + 1));
+                    return true;
+                }
+                continue;
+            }
+#endif
             if (relic.IsMelted) continue;
             StatefulRelicState state;
             switch (relic)
@@ -81,6 +95,39 @@ internal sealed partial class SimulatedCombatState
                     simulator.CreateAndAddGeneratedCardsToCombat<Shiv>(
                         player, PileType.Hand, relic.DynamicVars["Shivs"].IntValue, player);
                     break;
+#if STS2_LEGACY_107
+                case ToastyMittens when ReferenceEquals(relic.Owner, player):
+                {
+                    // v0.107.1: BeforeHandDraw shuffles if necessary, exhausts one draw-pile
+                    // card (prefer non-Innate on turn one), then grants Strength. No hand choice.
+                    SimPlayerCombatState piles = simulator.State.GetPlayerCombatState(player);
+                    if (piles.DrawPile.IsEmpty && !piles.DiscardPile.IsEmpty)
+                    {
+                        simulator.Shuffle(player);
+                        if (simulator.HasPendingChoice)
+                        {
+                            simulator.AppendExecutionContinuation(new BeforeHandDrawRelicFrame(player, relics, turn, relicIndex));
+                            return true;
+                        }
+                    }
+                    PredictedCard? toExhaust = turn == 1
+                        ? piles.DrawPile.Cards.FirstOrDefault(card => !card.Preview.Keywords.Contains(CardKeyword.Innate))
+                        : null;
+                    toExhaust ??= piles.DrawPile.Cards.FirstOrDefault();
+                    if (toExhaust != null)
+                    {
+                        simulator.Exhaust(toExhaust);
+                        if (simulator.HasPendingChoice)
+                        {
+                            simulator.AppendExecutionContinuation(new BeforeHandDrawRelicFrame(player, relics, turn, relicIndex, ApplyMittensStrength: true));
+                            return true;
+                        }
+                    }
+                    Apply<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>(player.Creature,
+                        relic.DynamicVars.Strength.IntValue, player.Creature);
+                    break;
+                }
+#endif
                 case JeweledMask when turn <= 1:
                 {
                     SimPlayerCombatState playerState = simulator.State.GetPlayerCombatState(player);

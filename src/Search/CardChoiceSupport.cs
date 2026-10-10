@@ -87,7 +87,11 @@ internal static partial class CardChoiceSupport
         CombatPredictionCardGenerationOptionsEntry? generated = simulator.History.FindLatestCardGenerationOptions(playedCard);
         if (generated != null)
         {
+#if STS2_LEGACY_107
+            int minCount = 0; // Only absent v0.108+ Abundance required one card.
+#else
             int minCount = card is Abundance ? 1 : 0;
+#endif
             return RangeSpec(
                 owner,
                 PlanChoiceEffect.GenerateToHand,
@@ -211,7 +215,7 @@ internal static partial class CardChoiceSupport
                 $"嵌套选牌检查找不到 {token.CardId}+{token.UpgradeLevel}#{token.OptionOccurrence}。");
         return GetSpec(simulator, selected) != null
             || BuildRequiredEmptyChoice(selected.Preview) != null
-            || selected.Preview is Abundance or Discovery or Quasar or Splash;
+            || selected.Preview is Discovery or Quasar or Splash;
     }
 
     public static IReadOnlyList<PlanCardChoice> BuildChoices(

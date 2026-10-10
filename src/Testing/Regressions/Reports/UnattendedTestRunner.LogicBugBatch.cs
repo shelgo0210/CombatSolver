@@ -615,9 +615,15 @@ internal sealed partial class UnattendedTestRunner
             AssertSnapshotEqual(state, CaptureSimulated(afterDeath, (SimulatedCombatState)afterDeath.State.CombatState, player, enemy),
                 "MelancholyOstyDeath", "ForkAfterDeath");
         }
+#if STS2_LEGACY_107
+        await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), osty, osty.CurrentHp + 10,
+            MegaCrit.Sts2.Core.ValueProps.ValueProp.Unblockable | MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered,
+            enemy, null);
+#else
         await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), osty, osty.CurrentHp + 10,
             MegaCrit.Sts2.Core.ValueProps.ValueProp.Unblockable | MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered,
             enemy, null, null);
+#endif
         await RunManager.Instance.ActionExecutor.FinishedExecutingActions();
         AssertSnapshotEqual(expected!, CaptureActual(combat, player, enemy), "MelancholyOstyDeath", "NativeDeath");
     }

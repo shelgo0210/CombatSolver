@@ -41,7 +41,7 @@ internal sealed partial class UnattendedTestRunner
         shadow.Apply<UnmovablePower>(player.Creature, 2, player.Creature);
         await PowerCmd.Apply<UnmovablePower>(new BlockingPlayerChoiceContext(), player.Creature, 2, player.Creature, null);
         CardModel source = player.PlayerCombatState.DiscardPile.Cards.Single(c => c.Id.Entry == "DEFEND_IRONCLAD");
-        CardPlay Play() => new() { Card = source, Player = player, Target = null, ResultPile = PileType.Discard,
+        CardPlay Play() => new() { Card = source, Target = null, ResultPile = PileType.Discard,
             Resources = new ResourceInfo { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
             IsAutoPlay = false, PlayIndex = 0, PlayCount = 1 };
         CardPlay samePlay = Play();

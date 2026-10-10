@@ -1,3 +1,4 @@
+#if !STS2_LEGACY_107
 using CombatSolver.Engine.InCombat.Mirrors;
 using CombatSolver.Engine.InCombat.Mirrors.Hooks.TurnEnd;
 using CombatSolver.Engine.InCombat.Simulation;
@@ -56,7 +57,7 @@ internal sealed partial class UnattendedTestRunner
         });
         ExtraTurnMirrors.RegisterAfterTakingExtraTurn(typeof(ExtraTurnOrderModel), (model, context) =>
             ((ExtraTurnOrderModel)model).Observed.Add(ReadPredicted(context)));
-        var reader = ModelDb.All.OfType<ExtraTurnOrderModel>().Single();
+        var reader = ModelDb._contentById.Values.OfType<ExtraTurnOrderModel>().Single();
         await ClearOrderedEffectFixtureAsync(combat, player);
         await InjectRelicAsync(player, new() { RelicId = "PAELS_EYE" });
         PaelsEye relic = player.Relics.OfType<PaelsEye>().Single();
@@ -136,3 +137,4 @@ internal sealed partial class UnattendedTestRunner
                 + (context.Combat.IsPaelsEyeUnused(context.Combat.RelicsOf(context.Player).OfType<PaelsEye>().Single()) ? 0 : 100);
     }
 }
+#endif // Ambergris extra-turn behavior absent in v0.107.1

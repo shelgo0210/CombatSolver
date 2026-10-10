@@ -15,7 +15,11 @@ internal static class AfterBlockBrokenMirrors
 {
     private static readonly MirrorMethodSpec AfterBlockBroken = MirrorMethodSpec.Hook(
         nameof(AbstractModel.AfterBlockBroken),
+#if STS2_LEGACY_107
+        [typeof(Creature)]);
+#else
         [typeof(PlayerChoiceContext), typeof(Creature), typeof(Creature)]);
+#endif
 
     private static readonly Registry Registry = CreateRegistry();
 
@@ -33,7 +37,9 @@ internal static class AfterBlockBrokenMirrors
         var registry = new Registry(AfterBlockBroken);
 
         registry.RegisterIgnored<BurrowedPower>();
+#if !STS2_LEGACY_107
         registry.Register<HandDrill>(HandleHandDrill);
+#endif
 
         return registry;
     }

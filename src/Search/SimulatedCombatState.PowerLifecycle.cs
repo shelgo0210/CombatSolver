@@ -110,7 +110,7 @@ internal sealed partial class SimulatedCombatState
             return value;
         value = _rootHistory.CardPlaysStarted.Count(entry =>
             entry.HappenedThisTurn(this)
-            && entry.CardPlay.Player.Creature == owner
+            && entry.CardPlay.Card.Owner.Creature == owner
             && entry.CardPlay.Card.Type == CardType.Skill);
         (_skillCardsPlayedThisTurn ??= [])[owner] = value;
         return value;

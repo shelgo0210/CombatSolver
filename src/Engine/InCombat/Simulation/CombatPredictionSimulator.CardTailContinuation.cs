@@ -17,7 +17,7 @@ internal sealed partial class CombatPredictionSimulator
         int ownerBlockBefore, CardPlayTailStage stage, int completionHistoryStart)
     {
         var preview = card.MutablePreview;
-        var owner = State.GetCreature(play.Player.Creature);
+        var owner = State.GetCreature(play.Card.Owner.Creature);
         if (stage <= CardPlayTailStage.Finish && owner.IsDead)
         {
             HookMirrors.AbortCardPlayed(this, play);

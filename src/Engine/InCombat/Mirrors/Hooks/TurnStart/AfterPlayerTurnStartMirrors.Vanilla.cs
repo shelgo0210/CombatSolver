@@ -19,7 +19,9 @@ internal static partial class AfterPlayerTurnStartMirrors
         {
             registry.Register<EntropyPower>(ApplyPower);
             registry.Register<CrimsonMantlePower>(ApplyPower);
+#if !STS2_LEGACY_107
             registry.Register<HibernatePower>(ApplyPower);
+#endif
             registry.Register<InfernoPower>(ApplyPower);
             registry.Register<LoopPower>(ApplyPower);
             registry.Register<RollingBoulderPower>(ApplyPower);
@@ -27,7 +29,9 @@ internal static partial class AfterPlayerTurnStartMirrors
             registry.Register<ToolsOfTheTradePower>(ApplyPower);
             registry.Register<TyrannyPower>(ApplyPower);
             registry.Register<Bellows>(ApplyRelic);
+#if !STS2_LEGACY_107
             registry.Register<BoneTea>(ApplyRelic);
+#endif
             registry.Register<ChoicesParadox>(ApplyRelic);
             registry.Register<EmotionChip>(ApplyRelic);
             registry.Register<FestivePopper>(ApplyRelic);
@@ -35,7 +39,9 @@ internal static partial class AfterPlayerTurnStartMirrors
             registry.Register<MercuryHourglass>(ApplyRelic);
             registry.Register<MrStruggles>(ApplyRelic);
             registry.Register<RoyalPoison>(ApplyRelic);
+#if !STS2_LEGACY_107
             registry.Register<ToastyMittens>(ApplyRelic);
+#endif
             registry.Register<VexingPuzzlebox>(ApplyRelic);
         }
         // 0.111.0 的原版正式模型没有 Early 有效覆写；不把普通或 Late 效果搬到这里。

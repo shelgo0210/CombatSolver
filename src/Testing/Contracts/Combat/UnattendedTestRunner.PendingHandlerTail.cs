@@ -662,7 +662,9 @@ internal sealed partial class UnattendedTestRunner
         => new()
         {
             Card = card.Original,
+#if !STS2_LEGACY_107
             Player = player,
+#endif
             Target = null,
             ResultPile = PileType.Discard,
             Resources = default,

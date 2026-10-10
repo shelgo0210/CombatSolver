@@ -129,7 +129,15 @@ internal sealed partial class UnattendedTestRunner
                 $"回合结束焦点/激发顺序夹具改变了原生 Focus：{focusBefore} -> {player.Creature.GetPowerAmount<FocusPower>()}。");
         }
 
+        #if STS2_LEGACY_107
+
+        await LegacyTestHooks.AfterSideTurnEndAsync(combat, CombatSide.Player, [player.Creature]);
+
+        #else
+
         await Hook.AfterSideTurnEnd(combat, CombatSide.Player, [player.Creature]);
+
+        #endif
         await RunManager.Instance.ActionExecutor.FinishedExecutingActions();
         stages.Add(DescribeStage("NativeAfterSideTurnEnd", CaptureActual(combat, player, enemy)));
         WriteTurnEndFocusOrderEvidence(stages);

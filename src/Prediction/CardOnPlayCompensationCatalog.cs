@@ -19,7 +19,7 @@ internal static class CardOnPlayCompensationCatalog
         typeof(Bombardment), typeof(ByrdSwoop), typeof(Conflagration), typeof(Dismantle), typeof(Finisher),
         typeof(FlashOfSteel), typeof(GrandFinale), typeof(LeadingStrike), typeof(Maul), typeof(MinionDiveBomb),
         typeof(PerfectedStrike), typeof(Poke), typeof(Protector), typeof(Rally), typeof(Rattle), typeof(Skewer),
-        typeof(Slice), typeof(Slimed), typeof(Spite), typeof(Squeeze), typeof(Stomp), typeof(TheBall),
+        typeof(Slice), typeof(Slimed), typeof(Spite), typeof(Squeeze), typeof(Stomp),
         typeof(TheScythe), typeof(Unleash),
         typeof(Acrobatics), typeof(BurningPact), typeof(CosmicIndifference), typeof(DaggerThrow),
         typeof(Glimmer), typeof(Graveblast), typeof(Hologram), typeof(NeowsFury), typeof(PhotonCut),
@@ -32,8 +32,7 @@ internal static class CardOnPlayCompensationCatalog
         typeof(KnockoutBlow), typeof(Misery), typeof(MoltenFist), typeof(MomentumStrike),
         typeof(Sacrifice), typeof(SculptingStrike), typeof(SecondWind), typeof(SicEm), typeof(Snap),
         typeof(SovereignBlade), typeof(Sunder), typeof(TheHunt),
-        typeof(ToricToughness), typeof(Whirlwind), typeof(WroughtInWar),
-        typeof(Abundance), typeof(Discovery), typeof(Quasar), typeof(Splash),
+        typeof(ToricToughness), typeof(Whirlwind), typeof(WroughtInWar), typeof(Discovery), typeof(Quasar), typeof(Splash),
         typeof(SeekerStrike), typeof(TrueGrit), typeof(SecretWeapon), typeof(SecretTechnique), typeof(Wish),
         typeof(Dredge), typeof(Prepared), typeof(Scavenge), typeof(Begone), typeof(Charge), typeof(Guards),
         typeof(DualWield), typeof(HiddenDaggers), typeof(Purity), typeof(Seance), typeof(Transfigure),
@@ -74,7 +73,7 @@ internal static class CardOnPlayCompensationCatalog
         typeof(Mayhem), typeof(MonarchsGaze), typeof(NoEscape), typeof(Nostalgia), typeof(NotYet),
         typeof(NoxiousFumes), typeof(Null), typeof(Omnislice), typeof(OneTwoPunch), typeof(PrepTime),
         typeof(PrimalForce), typeof(Prowess), typeof(Putrefy), typeof(Rage), typeof(RefineBlade), typeof(Rupture),
-        typeof(SentryMode), typeof(SerpentForm), typeof(SharedFate), typeof(Shockwave), typeof(Sidestep),
+        typeof(SentryMode), typeof(SerpentForm), typeof(SharedFate), typeof(Shockwave),
         typeof(Spinner), typeof(Storm), typeof(StormOfSteel), typeof(Tracking), typeof(WraithForm),
     ];
 
@@ -111,7 +110,9 @@ internal static class CardOnPlayCompensationCatalog
         [typeof(ToricToughness)] = "CARD-COMPLETION-BATCH-123",
         [typeof(Whirlwind)] = "CARD-COMPLETION-BATCH-123",
         [typeof(WroughtInWar)] = "CARD-COMPLETION-BATCH-123",
+#if !STS2_LEGACY_107
         [typeof(Abundance)] = "CARD-GENERATED-CHOICE-BATCH-121",
+#endif
         [typeof(Discovery)] = "CARD-GENERATED-CHOICE-BATCH-121",
         [typeof(Quasar)] = "CARD-GENERATED-CHOICE-BATCH-121",
         [typeof(Splash)] = "CARD-GENERATED-CHOICE-BATCH-121",

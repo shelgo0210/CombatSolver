@@ -119,7 +119,7 @@ internal sealed partial class UnattendedTestRunner
         CombatRootSnapshot unknownRoot = CombatRootSnapshot.Capture(live);
         var unknownParent = unknownRoot.ForkSimulator();
         string unknownBefore = DescribeContinuationContractState(unknownParent, unknownRoot, player);
-        var receiver = ModelDb.All.OfType<UnknownGoldSubscriber>().Single();
+        var receiver = ModelDb._contentById.Values.OfType<UnknownGoldSubscriber>().Single();
         for (int stage = 0; stage < 3; stage++)
         {
             var branch = unknownParent.Fork();

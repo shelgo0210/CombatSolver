@@ -48,7 +48,12 @@ internal static class CardEffectSpecRegistry
         [typeof(Glow)] = [Owner<DrawCardsNextTurnPower>(card => card.DynamicVars.Cards.IntValue)],
         [typeof(GuidingStar)] = [Owner<DrawCardsNextTurnPower>(card => card.DynamicVars.Cards.IntValue)],
         [typeof(Hegemony)] = [Owner<EnergyNextTurnPower>(card => card.DynamicVars.Energy.IntValue)],
+#if STS2_LEGACY_107
+        // Original v0.107.1 Hyperbeam applies a permanent negative FocusPower.
+        [typeof(Hyperbeam)] = [Owner<FocusPower>(card => -card.DynamicVars["FocusPower"].IntValue)],
+#else
         [typeof(Hyperbeam)] = [Owner<HyperbeamFocusDownPower>("FocusPower")],
+#endif
         [typeof(Knockdown)] = [Target<KnockdownPower>("KnockdownPower")],
         [typeof(LightningRod)] = [Owner<LightningRodPower>("LightningRodPower")],
         [typeof(Mangle)] = [Target<ManglePower>("StrengthLoss")],
@@ -497,8 +502,10 @@ internal static class CardEffectSpecRegistry
             combat.ApplyTemporaryStrengthGain<SetupStrikePower>(target, amount, applier);
         else if (powerType == typeof(FocusedStrikePower))
             combat.ApplyTemporaryFocus<FocusedStrikePower>(target, amount, applier);
+#if !STS2_LEGACY_107
         else if (powerType == typeof(HyperbeamFocusDownPower))
             combat.ApplyTemporaryFocusLoss<HyperbeamFocusDownPower>(target, amount, applier);
+#endif
         else
             combat.ApplyPower(powerType, target, amount, applier);
     }

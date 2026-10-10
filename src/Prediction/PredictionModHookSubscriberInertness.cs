@@ -46,7 +46,9 @@ internal static class PredictionModHookSubscriberInertness
         nameof(AbstractModel.AfterCombatVictoryEarly),
         nameof(AbstractModel.AfterCombatVictory),
         nameof(AbstractModel.AfterCombatEnd),
+#if !STS2_LEGACY_107
         nameof(AbstractModel.BeforeCombatRewardOffered),
+#endif
     };
 
     /// <summary>
@@ -57,7 +59,9 @@ internal static class PredictionModHookSubscriberInertness
     private static readonly HashSet<string> NonHookMemberNames = new(StringComparer.Ordinal)
     {
         nameof(AbstractModel.ShouldReceiveCombatHooks),
+#if !STS2_LEGACY_107
         nameof(AbstractModel.IsMock),
+#endif
         nameof(AbstractModel.PreviewOutsideOfCombat),
         nameof(AbstractModel.CompareTo),
     };

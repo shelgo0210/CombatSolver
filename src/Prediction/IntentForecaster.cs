@@ -58,13 +58,13 @@ internal static class IntentForecaster
     {
         List<Creature> enemies = state.Enemies.Where(enemy => enemy.Monster != null).ToList();
         List<Cursor> cursors = enemies.Select(enemy => new Cursor(enemy.Monster!)).ToList();
-        Rng rng = new(state.RunState.Rng.MonsterAi.ToSerializable());
+        Rng rng = state.RunState.Rng.MonsterAi.Clone();
         List<IReadOnlyList<ForecastMove>> rounds = [];
         bool unsupported = false;
         bool exact = true;
         HashSet<string> unsupportedDetails = new(StringComparer.Ordinal);
         HashSet<string> approximationDetails = new(StringComparer.Ordinal);
-        List<int> monsterAiCounters = [rng.ToSerializable().counter];
+        List<int> monsterAiCounters = [rng.Counter];
 
         for (int round = 0; round < roundCount; round++)
         {
@@ -93,7 +93,7 @@ internal static class IntentForecaster
                 }
                 cursor.Current = RollNext(cursor, rng, ref exact, approximationDetails);
             }
-            monsterAiCounters.Add(rng.ToSerializable().counter);
+            monsterAiCounters.Add(rng.Counter);
         }
 
         return new IntentForecast

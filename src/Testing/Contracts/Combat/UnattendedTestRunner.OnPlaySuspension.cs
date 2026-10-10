@@ -18,7 +18,9 @@ internal sealed partial class UnattendedTestRunner
 {
     private static void AssertOnPlaySuspensionBoundaries(CombatState combat, Player player)
     {
+#if !STS2_LEGACY_107
         AssertDrawOnPlayStopsBeforeEnergyAndBlock(combat, player);
+#endif
         AssertAttackOnPlayStopsBeforeOrbChannel(combat, player);
         AssertExhaustBatchStopsBeforeRemainingCardsAndAttack(combat, player);
         AssertAttackStopsBeforePermanentCardMutation(combat, player);
@@ -35,6 +37,7 @@ internal sealed partial class UnattendedTestRunner
         AssertDiamondDiademStopsBeforeBlur(combat, player);
     }
 
+#if !STS2_LEGACY_107
     private static void AssertDrawOnPlayStopsBeforeEnergyAndBlock(
         CombatState combat,
         Player player)
@@ -62,6 +65,8 @@ internal sealed partial class UnattendedTestRunner
             throw new InvalidOperationException("抽牌产生选择后仍结算了同一 OnPlay 的能量或格挡尾部。");
         }
     }
+#endif // game-v0.108+ fixture
+
 
     private static void AssertAttackOnPlayStopsBeforeOrbChannel(
         CombatState combat,
@@ -414,7 +419,7 @@ internal sealed partial class UnattendedTestRunner
             player.Creature,
             1,
             player.Creature);
-        CardModel starModel = ModelDb.All
+        CardModel starModel = ModelDb._contentById.Values
             .OfType<CardModel>()
             .Where(candidate => candidate.BaseStarCost > 0)
             .OrderBy(candidate => candidate.BaseStarCost)
@@ -538,7 +543,9 @@ internal sealed partial class UnattendedTestRunner
             CardPlay = new CardPlay
             {
                 Card = card.Preview,
-                Player = player,
+    #if !STS2_LEGACY_107
+            Player = player,
+#endif
                 Target = target,
                 ResultPile = PileType.Discard,
                 Resources = default,

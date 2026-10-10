@@ -32,6 +32,10 @@ internal static class FrostOrbMirrors
         if (context.Simulator.HasPendingChoice)
             return completedTargets;
 
+#if STS2_LEGACY_107
+        // HibernatePower was introduced in v0.108; no partner grant exists in v0.107.1.
+        return completedTargets;
+#else
         if (!orb.Owner.Creature.HasPower<HibernatePower>())
         {
             return completedTargets;
@@ -51,5 +55,6 @@ internal static class FrostOrbMirrors
         }
 
         return completedTargets;
+#endif
     }
 }

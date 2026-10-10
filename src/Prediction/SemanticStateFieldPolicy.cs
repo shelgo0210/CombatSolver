@@ -23,7 +23,9 @@ internal static class SemanticStateFieldPolicy
         (typeof(NightmarePower), "Card"),
         (typeof(FlankingPower), "Applier"),
         (typeof(ShrinkPower), "ApplierName"),
+#if !STS2_LEGACY_107
         (typeof(ImitationLearningPower), "TargetPlayer"),
+#endif
         (typeof(CoveredPower), "Applier"),
         (typeof(BarricadePower), "ApplierName"),
     ];

@@ -179,6 +179,15 @@ internal sealed partial class UnattendedTestRunner
 
         if (automaticDeath)
         {
+#if STS2_LEGACY_107
+            await CreatureCmd.Damage(
+                new BlockingPlayerChoiceContext(),
+                player.Creature,
+                player.Creature.CurrentHp + 10,
+                ValueProp.Unblockable | ValueProp.Unpowered,
+                enemy,
+                null);
+#else
             await CreatureCmd.Damage(
                 new BlockingPlayerChoiceContext(),
                 player.Creature,
@@ -187,6 +196,7 @@ internal sealed partial class UnattendedTestRunner
                 enemy,
                 null,
                 null);
+#endif
             await RunManager.Instance.ActionExecutor.FinishedExecutingActions();
         }
         else

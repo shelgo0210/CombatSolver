@@ -19,7 +19,7 @@ internal sealed partial class UnattendedTestRunner
     private void AssertMirroredHookFilter(CombatState combat, Player player)
     {
         string liveBefore = ContinuationStamp.CaptureLive(combat).StateText;
-        AbstractModel[] models = ModelDb.All.ToArray();
+        AbstractModel[] models = ModelDb._contentById.Values.ToArray();
         var filter = new MirroredHookListenerFilter(enabled: true);
         var snapshot = (MirroredHookListenerSnapshot)filter.Filter(models);
         int checkedMethods = 0;

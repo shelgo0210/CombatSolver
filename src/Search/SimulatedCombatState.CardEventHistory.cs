@@ -34,7 +34,7 @@ internal sealed partial class SimulatedCombatState
         => _rootHistory.DamageReceived.Count(entry => entry.Receiver == owner && entry.Result.UnblockedDamage > 0);
 
     internal int GetEtherealPlaysBeforePrediction(Player player)
-        => _rootHistory.CardPlaysFinished.Count(entry => entry.CardPlay.Player == player && entry.WasEthereal);
+        => _rootHistory.CardPlaysFinished.Count(entry => entry.CardPlay.Card.Owner == player && entry.WasEthereal);
 
     internal int GetFinishedPlaysBeforePrediction()
         => _rootHistory.CardPlaysFinished.Length;
@@ -112,18 +112,18 @@ internal sealed partial class SimulatedCombatState
             && entry.Card.Type == CardType.Status);
         int zeroCostAttackStarts = CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
             entry.HappenedThisTurn(combatState)
-            && entry.CardPlay.Player == player
+            && entry.CardPlay.Card.Owner == player
             && entry.CardPlay.Card.Type == CardType.Attack
             && entry.CardPlay.Resources.EnergyValue == 0);
         int cardPlayStarts = CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
-            entry.HappenedThisTurn(combatState) && entry.CardPlay.Player == player);
+            entry.HappenedThisTurn(combatState) && entry.CardPlay.Card.Owner == player);
         int attackSkillStarts = CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
-            entry.HappenedThisTurn(combatState) && entry.CardPlay.Player == player
+            entry.HappenedThisTurn(combatState) && entry.CardPlay.Card.Owner == player
             && entry.CardPlay.Card.Type is CardType.Attack or CardType.Skill);
         AppendTurnCardHistory(text, statusCardsDrawn, zeroCostAttackStarts, cardPlayStarts, attackSkillStarts);
         text.Append(";FlameHp=").Append(CaptureBrightestFlameMaxHpSpent(CombatManager.Instance.History.CardPlaysStarted));
         text.Append(";AttackStarts=").Append(CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
-            entry.HappenedThisTurn(combatState) && entry.CardPlay.Player == player
+            entry.HappenedThisTurn(combatState) && entry.CardPlay.Card.Owner == player
             && entry.CardPlay.Card.Type == CardType.Attack));
     }
 
@@ -175,7 +175,7 @@ internal sealed partial class SimulatedCombatState
             {
                 int etherealPlays = simulator.History.Entries
                     .OfType<CombatPredictionCardPlayFinishedEntry>()
-                    .Count(entry => entry.WasEthereal && ReferenceEquals(entry.CardPlay.Player, preview.Owner));
+                    .Count(entry => entry.WasEthereal && ReferenceEquals(entry.CardPlay.Card.Owner, preview.Owner));
                 bansheesCry.EnergyCost.AddThisCombat(-etherealPlays * bansheesCry.DynamicVars.Energy.IntValue);
                 break;
             }

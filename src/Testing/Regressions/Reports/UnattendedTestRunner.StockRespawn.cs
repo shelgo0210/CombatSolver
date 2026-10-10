@@ -16,7 +16,7 @@ internal sealed partial class UnattendedTestRunner
         {
             // Report 835b630a T9: exact Niche state before the replacement is rolled.
             var niche = combat.RunState.Rng.Niche;
-            niche._counter = 54;
+            niche.Counter = 54;
             niche._random._s0 = 8740133261244141179UL;
             niche._random._s1 = 9651599535138124467UL;
             niche._random._s2 = 1850010101246481511UL;

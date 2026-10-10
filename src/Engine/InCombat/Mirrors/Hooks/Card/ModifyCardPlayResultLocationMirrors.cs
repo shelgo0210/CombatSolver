@@ -15,12 +15,22 @@ using AfterRegistry = MethodMirrorRegistry<AbstractModel, AfterModifyingCardPlay
 internal static class ModifyCardPlayResultLocationMirrors
 {
     private static readonly MirrorMethodSpec ModifyCardPlayResultLocation = MirrorMethodSpec.Hook(
+#if STS2_LEGACY_107
+        nameof(AbstractModel.ModifyCardPlayResultPileTypeAndPosition),
+        [typeof(CardModel), typeof(bool), typeof(ResourceInfo), typeof(PileType), typeof(CardPilePosition)]);
+#else
         nameof(AbstractModel.ModifyCardPlayResultLocation),
         [typeof(CardModel), typeof(bool), typeof(ResourceInfo), typeof(CardLocation)]);
+#endif
 
     private static readonly MirrorMethodSpec AfterModifyingCardPlayResultLocation = MirrorMethodSpec.Hook(
+#if STS2_LEGACY_107
+        nameof(AbstractModel.AfterModifyingCardPlayResultPileOrPosition),
+        [typeof(CardModel), typeof(PileType), typeof(CardPilePosition)]);
+#else
         nameof(AbstractModel.AfterModifyingCardPlayResultLocation),
         [typeof(CardModel), typeof(CardLocation)]);
+#endif
 
     private static readonly Registry Registry = CreateRegistry();
     private static readonly AfterRegistry AfterRegistry = CreateAfterRegistry();
@@ -45,11 +55,18 @@ internal static class ModifyCardPlayResultLocationMirrors
         AbstractModel listener,
         ModifyCardPlayResultLocationMirrorContext context)
     {
+#if STS2_LEGACY_107
+        var (pile, position) = listener.ModifyCardPlayResultPileTypeAndPosition(
+            context.Card.Preview, context.IsAutoPlay, context.Resources,
+            context.Location.pileType, context.Location.position);
+        return context.Location with { pileType = pile, position = position };
+#else
         return listener.ModifyCardPlayResultLocation(
             context.Card.Preview,
             context.IsAutoPlay,
             context.Resources,
             context.Location);
+#endif
     }
 
     private static Registry CreateRegistry()

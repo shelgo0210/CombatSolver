@@ -149,7 +149,7 @@ internal sealed partial class SimulatedCombatState
         if (_lastAttackPreviousTurn?.TryGetValue(player, out PredictedCard? predicted) == true)
             return predicted;
         CardPlayFinishedEntry? live = _rootHistory.CardPlaysFinished.LastOrDefault(entry =>
-            entry.CardPlay.Player == player
+            entry.CardPlay.Card.Owner == player
             && entry.HappenedLastPlayerTurn(player)
             && entry.CardPlay.Card.Type == CardType.Attack
             && !entry.CardPlay.Card.IsDupe);

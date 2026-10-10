@@ -51,7 +51,7 @@ internal sealed partial class UnattendedTestRunner
             target: null,
             cardPlay: new MegaCrit.Sts2.Core.Entities.Cards.CardPlay
             {
-                Card = card.Preview, Player = player, Target = null,
+                Card = card.Preview, Target = null,
                 ResultPile = MegaCrit.Sts2.Core.Entities.Cards.PileType.Discard,
                 Resources = new() { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
                 IsAutoPlay = false, PlayIndex = 0, PlayCount = 1
